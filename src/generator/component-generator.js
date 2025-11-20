@@ -66,7 +66,7 @@ function getComponentTemplate(db, component) {
   try {
     // Get simplest example as template
     // NOTE: p.component_name is actually the CATEGORY, p.title is the actual component name
-    
+
     // Try multiple name variations to match singular/plural forms and utilities
     const componentStr = String(component).toLowerCase().trim();
     const componentVariations = [
@@ -82,7 +82,7 @@ function getComponentTemplate(db, component) {
     const exactMatches = componentVariations.map(() => 'LOWER(p.title) = ?').join(' OR ');
     const exactMatchesComponent = componentVariations.map(() => 'LOWER(p.component_name) = ?').join(' OR ');
     const likePatterns = componentVariations.map(() => 'LOWER(p.title) LIKE ?').join(' OR ');
-    
+
     const query = `
       SELECT 
         ce.code,
@@ -96,7 +96,7 @@ function getComponentTemplate(db, component) {
         OR ${exactMatchesComponent}
         OR ${likePatterns}
       )
-        AND ce.language = 'html'
+        AND ce.language IN ('html', 'markdown')
       ORDER BY 
         CASE 
           WHEN ece.complexity = 'simple' THEN 1
@@ -111,7 +111,7 @@ function getComponentTemplate(db, component) {
       ...componentVariations,                              // Exact component_name matches  
       ...componentVariations.map(v => `%${v}%`)           // LIKE patterns for title
     ];
-    
+
     const template = db.prepare(query).get(...params);
 
     if (!template) {

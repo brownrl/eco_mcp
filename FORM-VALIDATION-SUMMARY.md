@@ -409,13 +409,13 @@ export {
 
 ## Visual Symptoms Diagnostic Guide
 
-| Symptom | Likely Cause | Fix |
-|---------|--------------|-----|
-| Labels floating with huge gaps above inputs | Helper text after input instead of before | Move `.ecl-help-block` between label and input |
-| Excessive spacing between form fields | Utility margin classes on `.ecl-form-group` | Remove `ecl-u-mb-*` classes |
-| Checkboxes without visible boxes | Missing SVG icon or wrong structure | Add `<svg class="ecl-icon ecl-icon--s ecl-checkbox__icon">` |
-| Select looks like plain input | Missing container or icon | Wrap in `.ecl-select__container`, add icon |
-| Required * not styled | Wrong class or structure | Use `<span class="ecl-form-label__required" role="note">*</span>` |
+| Symptom                                     | Likely Cause                                | Fix                                                               |
+| ------------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------- |
+| Labels floating with huge gaps above inputs | Helper text after input instead of before   | Move `.ecl-help-block` between label and input                    |
+| Excessive spacing between form fields       | Utility margin classes on `.ecl-form-group` | Remove `ecl-u-mb-*` classes                                       |
+| Checkboxes without visible boxes            | Missing SVG icon or wrong structure         | Add `<svg class="ecl-icon ecl-icon--s ecl-checkbox__icon">`       |
+| Select looks like plain input               | Missing container or icon                   | Wrap in `.ecl-select__container`, add icon                        |
+| Required * not styled                       | Wrong class or structure                    | Use `<span class="ecl-form-label__required" role="note">*</span>` |
 
 ---
 

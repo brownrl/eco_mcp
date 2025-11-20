@@ -23,10 +23,10 @@ const insertComponent = db.prepare(`
 `);
 
 insertComponent.run(
-  'Blockquote',
-  'content',
-  'Blockquote component for displaying quoted text with optional image and author attribution',
-  'https://ec.europa.eu/component-library/ec/components/blockquote/'
+    'Blockquote',
+    'content',
+    'Blockquote component for displaying quoted text with optional image and author attribution',
+    'https://ec.europa.eu/component-library/ec/components/blockquote/'
 );
 
 const componentId = db.prepare('SELECT id FROM components WHERE name = ?').get('Blockquote').id;
@@ -40,11 +40,11 @@ const insertPage = db.prepare(`
 `);
 
 insertPage.run(
-  'https://ec.europa.eu/component-library/ec/components/blockquote/',
-  'Blockquote',
-  'Blockquote',
-  'content',
-  '<!-- Blockquote component page -->'
+    'https://ec.europa.eu/component-library/ec/components/blockquote/',
+    'Blockquote',
+    'Blockquote',
+    'content',
+    '<!-- Blockquote component page -->'
 );
 
 const pageId = db.prepare('SELECT id FROM pages WHERE title = ?').get('Blockquote').id;
@@ -54,10 +54,10 @@ console.log(`   ✅ Page created with ID: ${pageId}\n`);
 console.log('3️⃣ Adding code examples...');
 
 const examples = [
-  {
-    example_type: 'blockquote-text-only',
-    description: 'Blockquote with text only (no image)',
-    code: `<figure class="ecl-blockquote">
+    {
+        example_type: 'blockquote-text-only',
+        description: 'Blockquote with text only (no image)',
+        code: `<figure class="ecl-blockquote">
   <div class="ecl-blockquote__body">
     <blockquote class="ecl-blockquote__quote">
       <p class="ecl-blockquote__citation" lang="en">The European Union is a unique economic and political union between 27 EU countries that together cover much of the continent.</p>
@@ -67,12 +67,12 @@ const examples = [
     </blockquote>
   </div>
 </figure>`,
-    complexity: 'basic'
-  },
-  {
-    example_type: 'blockquote-with-image',
-    description: 'Blockquote with image and attribution',
-    code: `<figure class="ecl-blockquote">
+        complexity: 'basic'
+    },
+    {
+        example_type: 'blockquote-with-image',
+        description: 'Blockquote with image and attribution',
+        code: `<figure class="ecl-blockquote">
   <picture class="ecl-picture ecl-blockquote__picture">
     <img class="ecl-blockquote__image" src="https://inno-ecl.s3.amazonaws.com/media/examples/example-image.jpg" alt="Image description">
   </picture>
@@ -85,12 +85,12 @@ const examples = [
     </blockquote>
   </div>
 </figure>`,
-    complexity: 'intermediate'
-  },
-  {
-    example_type: 'blockquote-multilingual',
-    description: 'Blockquote with multilingual citation',
-    code: `<figure class="ecl-blockquote">
+        complexity: 'intermediate'
+    },
+    {
+        example_type: 'blockquote-multilingual',
+        description: 'Blockquote with multilingual citation',
+        code: `<figure class="ecl-blockquote">
   <div class="ecl-blockquote__body">
     <blockquote class="ecl-blockquote__quote">
       <p class="ecl-blockquote__citation" lang="fr">L'Union européenne est une union économique et politique unique entre 27 pays de l'UE qui couvrent ensemble une grande partie du continent.</p>
@@ -100,8 +100,8 @@ const examples = [
     </blockquote>
   </div>
 </figure>`,
-    complexity: 'basic'
-  }
+        complexity: 'basic'
+    }
 ];
 
 const insertExample = db.prepare(`
@@ -115,29 +115,29 @@ const insertEnhanced = db.prepare(`
 `);
 
 examples.forEach((example, index) => {
-  const result = insertExample.run(
-    componentId,
-    pageId,
-    example.example_type,
-    'html',
-    example.code,
-    example.description,
-    index
-  );
-  
-  const exampleId = result.lastInsertRowid;
-  
-  // Add enhanced metadata
-  insertEnhanced.run(
-    exampleId,
-    example.example_type.replace('blockquote-', ''),
-    example.description,
-    example.complexity,
-    1, // complete_example
-    'Use semantic HTML with lang attribute on citation. Figure element provides proper document structure.'
-  );
-  
-  console.log(`   ✅ ${example.description}`);
+    const result = insertExample.run(
+        componentId,
+        pageId,
+        example.example_type,
+        'html',
+        example.code,
+        example.description,
+        index
+    );
+
+    const exampleId = result.lastInsertRowid;
+
+    // Add enhanced metadata
+    insertEnhanced.run(
+        exampleId,
+        example.example_type.replace('blockquote-', ''),
+        example.description,
+        example.complexity,
+        1, // complete_example
+        'Use semantic HTML with lang attribute on citation. Figure element provides proper document structure.'
+    );
+
+    console.log(`   ✅ ${example.description}`);
 });
 
 console.log();
@@ -146,26 +146,26 @@ console.log();
 console.log('4️⃣ Adding usage guidance...');
 
 const guidance = [
-  {
-    guidance_type: 'when-to-use',
-    content: 'Use blockquotes to highlight important quotes, testimonials, or statements from authoritative sources. The blockquote component provides visual emphasis and proper semantic structure.'
-  },
-  {
-    guidance_type: 'best-practice',
-    content: 'Always include attribution using the <cite> element within the footer. Use the lang attribute on the citation paragraph when quoting text in a different language.'
-  },
-  {
-    guidance_type: 'best-practice',
-    content: 'The root element MUST be <figure class="ecl-blockquote">, not <blockquote>. The actual <blockquote> element is nested inside the body wrapper.'
-  },
-  {
-    guidance_type: 'caveat',
-    content: 'Do NOT use <blockquote> as the root element. ECL uses <figure> as the root with proper BEM nesting: figure > div.ecl-blockquote__body > blockquote.ecl-blockquote__quote'
-  },
-  {
-    guidance_type: 'limitation',
-    content: 'Images are optional but must use the structure: <picture class="ecl-picture ecl-blockquote__picture"> with <img class="ecl-blockquote__image">. Do not add images directly without proper wrapper.'
-  }
+    {
+        guidance_type: 'when-to-use',
+        content: 'Use blockquotes to highlight important quotes, testimonials, or statements from authoritative sources. The blockquote component provides visual emphasis and proper semantic structure.'
+    },
+    {
+        guidance_type: 'best-practice',
+        content: 'Always include attribution using the <cite> element within the footer. Use the lang attribute on the citation paragraph when quoting text in a different language.'
+    },
+    {
+        guidance_type: 'best-practice',
+        content: 'The root element MUST be <figure class="ecl-blockquote">, not <blockquote>. The actual <blockquote> element is nested inside the body wrapper.'
+    },
+    {
+        guidance_type: 'caveat',
+        content: 'Do NOT use <blockquote> as the root element. ECL uses <figure> as the root with proper BEM nesting: figure > div.ecl-blockquote__body > blockquote.ecl-blockquote__quote'
+    },
+    {
+        guidance_type: 'limitation',
+        content: 'Images are optional but must use the structure: <picture class="ecl-picture ecl-blockquote__picture"> with <img class="ecl-blockquote__image">. Do not add images directly without proper wrapper.'
+    }
 ];
 
 const insertGuidance = db.prepare(`
@@ -174,9 +174,9 @@ const insertGuidance = db.prepare(`
 `);
 
 guidance.forEach(g => {
-  const priority = g.guidance_type === 'caveat' ? 10 : (g.guidance_type === 'best-practice' ? 8 : 5);
-  insertGuidance.run(pageId, g.guidance_type, g.content, priority);
-  console.log(`   ✅ ${g.guidance_type}: ${g.content.substring(0, 60)}...`);
+    const priority = g.guidance_type === 'caveat' ? 10 : (g.guidance_type === 'best-practice' ? 8 : 5);
+    insertGuidance.run(pageId, g.guidance_type, g.content, priority);
+    console.log(`   ✅ ${g.guidance_type}: ${g.content.substring(0, 60)}...`);
 });
 
 console.log();
@@ -196,11 +196,11 @@ console.log('   ✅ Metadata added\n');
 console.log('6️⃣ Adding component tags...');
 
 const tags = [
-  { tag: 'quote', tag_type: 'feature' },
-  { tag: 'citation', tag_type: 'feature' },
-  { tag: 'testimonial', tag_type: 'use-case' },
-  { tag: 'semantic-html', tag_type: 'feature' },
-  { tag: 'content', tag_type: 'category' }
+    { tag: 'quote', tag_type: 'feature' },
+    { tag: 'citation', tag_type: 'feature' },
+    { tag: 'testimonial', tag_type: 'use-case' },
+    { tag: 'semantic-html', tag_type: 'feature' },
+    { tag: 'content', tag_type: 'category' }
 ];
 
 const insertTag = db.prepare(`
@@ -209,8 +209,8 @@ const insertTag = db.prepare(`
 `);
 
 tags.forEach(t => {
-  insertTag.run(pageId, t.tag, t.tag_type);
-  console.log(`   ✅ Tag: ${t.tag} (${t.tag_type})`);
+    insertTag.run(pageId, t.tag, t.tag_type);
+    console.log(`   ✅ Tag: ${t.tag} (${t.tag_type})`);
 });
 
 console.log();
@@ -219,17 +219,17 @@ console.log();
 console.log('7️⃣ Adding accessibility requirements...');
 
 const a11yRequirements = [
-  {
-    requirement_type: 'best-practice',
-    description: 'Use semantic HTML elements (figure, blockquote, cite) for proper document structure',
-    implementation: 'Root element is <figure>, quote text in <blockquote>, author in <cite>'
-  },
-  {
-    requirement_type: 'wcag-aa',
-    wcag_criterion: '3.1.2',
-    description: 'Language of parts - Use lang attribute on citation when quoting text in different language',
-    implementation: '<p class="ecl-blockquote__citation" lang="fr">Quote in French</p>'
-  }
+    {
+        requirement_type: 'best-practice',
+        description: 'Use semantic HTML elements (figure, blockquote, cite) for proper document structure',
+        implementation: 'Root element is <figure>, quote text in <blockquote>, author in <cite>'
+    },
+    {
+        requirement_type: 'wcag-aa',
+        wcag_criterion: '3.1.2',
+        description: 'Language of parts - Use lang attribute on citation when quoting text in different language',
+        implementation: '<p class="ecl-blockquote__citation" lang="fr">Quote in French</p>'
+    }
 ];
 
 const insertA11y = db.prepare(`
@@ -238,14 +238,14 @@ const insertA11y = db.prepare(`
 `);
 
 a11yRequirements.forEach(req => {
-  insertA11y.run(
-    pageId,
-    req.requirement_type,
-    req.wcag_criterion || null,
-    req.description,
-    req.implementation
-  );
-  console.log(`   ✅ ${req.requirement_type}: ${req.description.substring(0, 50)}...`);
+    insertA11y.run(
+        pageId,
+        req.requirement_type,
+        req.wcag_criterion || null,
+        req.description,
+        req.implementation
+    );
+    console.log(`   ✅ ${req.requirement_type}: ${req.description.substring(0, 50)}...`);
 });
 
 console.log();
@@ -254,10 +254,10 @@ console.log();
 console.log('8️⃣ Adding content sections...');
 
 const sections = [
-  {
-    section_type: 'structure',
-    heading: 'HTML Structure',
-    content: `The blockquote component uses a figure element as the root, containing an optional picture element and a required body wrapper. The actual blockquote element is nested inside the body.
+    {
+        section_type: 'structure',
+        heading: 'HTML Structure',
+        content: `The blockquote component uses a figure element as the root, containing an optional picture element and a required body wrapper. The actual blockquote element is nested inside the body.
 
 Correct structure:
 - figure.ecl-blockquote (root)
@@ -268,20 +268,20 @@ Correct structure:
       - p.ecl-blockquote__citation (quote text)
       - footer.ecl-blockquote__attribution
         - cite.ecl-blockquote__author (author name)`,
-    position: 0
-  },
-  {
-    section_type: 'usage',
-    heading: 'When to Use',
-    content: 'Use blockquotes to highlight important quotes, testimonials, or statements from authoritative sources. Include attribution to provide context and credibility.',
-    position: 1
-  },
-  {
-    section_type: 'accessibility',
-    heading: 'Accessibility',
-    content: 'Use the lang attribute on the citation paragraph when the quote is in a different language than the page. Use semantic HTML elements (figure, blockquote, cite) for proper screen reader support.',
-    position: 2
-  }
+        position: 0
+    },
+    {
+        section_type: 'usage',
+        heading: 'When to Use',
+        content: 'Use blockquotes to highlight important quotes, testimonials, or statements from authoritative sources. Include attribution to provide context and credibility.',
+        position: 1
+    },
+    {
+        section_type: 'accessibility',
+        heading: 'Accessibility',
+        content: 'Use the lang attribute on the citation paragraph when the quote is in a different language than the page. Use semantic HTML elements (figure, blockquote, cite) for proper screen reader support.',
+        position: 2
+    }
 ];
 
 const insertSection = db.prepare(`
@@ -290,8 +290,8 @@ const insertSection = db.prepare(`
 `);
 
 sections.forEach(section => {
-  insertSection.run(pageId, section.section_type, section.heading, section.content, section.position);
-  console.log(`   ✅ ${section.heading}`);
+    insertSection.run(pageId, section.section_type, section.heading, section.content, section.position);
+    console.log(`   ✅ ${section.heading}`);
 });
 
 db.close();
