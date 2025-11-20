@@ -50,11 +50,22 @@ export function searchComponents(db, params = {}) {
 
     // Full-text search if query provided
     if (query && query.trim()) {
-      sql += ` AND p.id IN (
-        SELECT rowid FROM pages_fts 
-        WHERE pages_fts MATCH ?
+      // Create a broader search pattern for FTS (treat spaces as OR)
+      // This ensures we get candidates that match ANY of the terms
+      const ftsQuery = query.trim().replace(/\s+/g, ' OR ');
+
+      sql += ` AND (
+        p.id IN (
+          SELECT rowid FROM pages_fts 
+          WHERE pages_fts MATCH ?
+        )
+        OR p.title LIKE ?
+        OR cm.component_name LIKE ?
       )`;
-      queryParams.push(query.trim());
+
+      queryParams.push(ftsQuery);
+      queryParams.push(`%${query.trim()}%`);
+      queryParams.push(`%${query.trim()}%`);
     }
 
     // Filter by category
@@ -83,34 +94,92 @@ export function searchComponents(db, params = {}) {
 
     sql += `
       GROUP BY p.id
-      ORDER BY 
-        CASE 
-          WHEN p.title LIKE ? THEN 1
-          WHEN cm.component_name LIKE ? THEN 2
-          ELSE 3
-        END,
-        p.title
-      LIMIT ?
     `;
 
-    const searchPattern = query ? `%${query}%` : '%';
-    queryParams.push(searchPattern, searchPattern, limit);
+    // Fetch more results to allow for JS-based re-ranking
+    // We'll apply the limit after scoring
+    const maxFetch = 100;
 
+    const queryParamsWithSearch = [...queryParams];
+    // We removed the ORDER BY clauses that used parameters, so we don't need to push them
+    // But we still need to handle the parameters if we had them.
+    // Wait, the previous code pushed searchPattern twice for the ORDER BY.
+    // We need to remove those pushes if we remove the ORDER BY.
+
+    // Let's reconstruct the query execution cleanly.
     const results = db.prepare(sql).all(...queryParams);
 
-    // Enhance results with additional metadata
-    const enhanced = results.map(row => ({
-      id: row.id,
-      url: row.url,
-      title: row.title,
-      category: row.category,
-      component_name: row.component_name,
-      component_type: row.component_type,
-      complexity: row.complexity,
-      requires_js: Boolean(row.requires_js),
-      status: row.status,
-      tags: row.tags ? row.tags.split(',') : []
-    }));
+    // Enhance results with additional metadata and calculate score
+    const searchTerms = query ? query.toLowerCase().split(/\s+/).filter(t => t.length > 0) : [];
+
+    let enhanced = results.map(row => {
+      const item = {
+        id: row.id,
+        url: row.url,
+        title: row.title,
+        category: row.category,
+        component_name: row.component_name,
+        component_type: row.component_type,
+        complexity: row.complexity,
+        requires_js: Boolean(row.requires_js),
+        status: row.status,
+        tags: row.tags ? row.tags.split(',') : []
+      };
+
+      // Calculate Relevance Score
+      let score = 0;
+      if (query) {
+        const titleLower = (item.title || '').toLowerCase();
+        const nameLower = (item.component_name || '').toLowerCase();
+        const queryLower = query.toLowerCase();
+
+        // 1. Exact full phrase match (Highest)
+        if (titleLower === queryLower || nameLower === queryLower) score += 100;
+
+        // 2. Starts with query
+        else if (titleLower.startsWith(queryLower) || nameLower.startsWith(queryLower)) score += 80;
+
+        // 3. Contains full query phrase
+        else if (titleLower.includes(queryLower) || nameLower.includes(queryLower)) score += 60;
+
+        // 4. Word overlap (High value per word)
+        let matchedWords = 0;
+        searchTerms.forEach(term => {
+          if (titleLower.includes(term) || nameLower.includes(term)) {
+            matchedWords++;
+            score += 10; // Base points for word match
+
+            // Bonus for starting with the word
+            if (titleLower.split(/\s+/).some(w => w.startsWith(term))) score += 5;
+          }
+        });
+
+        // Bonus for matching all words
+        if (matchedWords === searchTerms.length && searchTerms.length > 1) score += 20;
+
+        // 5. Category match (Low)
+        if (item.category && item.category.toLowerCase().includes(queryLower)) score += 5;
+
+        // 6. Tag match (Low)
+        if (item.tags.some(t => t.toLowerCase().includes(queryLower))) score += 5;
+      }
+
+      return { ...item, score };
+    });
+
+    // Sort by score (descending) then title (ascending)
+    if (query) {
+      enhanced.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.title.localeCompare(b.title);
+      });
+    } else {
+      // Default sort if no query
+      enhanced.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    // Apply limit
+    enhanced = enhanced.slice(0, limit);
 
     return {
       success: true,
