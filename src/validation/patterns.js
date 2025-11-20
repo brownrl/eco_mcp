@@ -9,7 +9,7 @@ export const DIAGNOSTIC_PATTERNS = {
   // ============================================================================
   // ARIA and Accessibility Patterns
   // ============================================================================
-  
+
   'missing-aria-label-button': {
     pattern: /<button[^>]*(?!aria-label|aria-labelledby)[^>]*>(\s*<\/button>|<\/button>|\s*$)/i,
     severity: 'error',
@@ -218,6 +218,43 @@ export const DIAGNOSTIC_PATTERNS = {
     fix: 'Replace with Arial or use ECL typography utility classes',
     example: 'style="font-family: arial, sans-serif" or class="ecl-u-type-paragraph"',
     note: 'ECL design system requires Arial for all text content.'
+  },
+
+  // ============================================================================
+  // Link Contrast and Color Issues
+  // ============================================================================
+
+  'footer-link-without-inverted': {
+    pattern: /<footer[^>]*>[\s\S]*?<a[^>]*class="[^"]*ecl-link(?![^"]*inverted)[^"]*"[^>]*>[\s\S]*?<\/footer>/i,
+    severity: 'error',
+    components: ['site footer', 'footer', '*'],
+    message: 'Footer links missing ecl-link--inverted class cause blue-on-blue contrast failure',
+    fix: 'Add ecl-link--inverted class to all links in footer',
+    wcag: '1.4.3',
+    example: '<footer><a href="#" class="ecl-link ecl-link--inverted">Link</a></footer>',
+    note: 'Site footer has dark blue background (#004494). Default blue links (#3860ed) are invisible. The inverted class applies white text.'
+  },
+
+  'link-in-dark-component-without-inverted': {
+    pattern: /<(footer|\.ecl-footer|\.ecl-page-header--dark|\.ecl-banner)[^>]*>[\s\S]*?<a[^>]*class="ecl-link(?![^"]*inverted)"[^>]*>/i,
+    severity: 'error',
+    components: ['site footer', 'page header', 'page-header', 'banner', '*'],
+    message: 'Links on dark backgrounds must use ecl-link--inverted for proper contrast',
+    fix: 'Add ecl-link--inverted class',
+    wcag: '1.4.3',
+    example: '<a href="#" class="ecl-link ecl-link--inverted">Link on dark background</a>',
+    note: 'ECL default link color (#3860ed blue) is designed for light backgrounds. Dark backgrounds require inverted (white) links.'
+  },
+
+  'standalone-link-without-inverted-on-dark': {
+    pattern: /<a[^>]*class="ecl-link(?![^"]*inverted)"[^>]*>/i,
+    severity: 'info',
+    components: ['links', 'link', '*'],
+    message: 'Verify link contrast: ecl-link default is blue (#3860ed) for light backgrounds',
+    fix: 'If link is on dark background, add ecl-link--inverted class',
+    wcag: '1.4.3',
+    example: 'Light BG: <a class="ecl-link">Link</a> | Dark BG: <a class="ecl-link ecl-link--inverted">Link</a>',
+    note: 'Common dark components: site-footer, page-header (dark variant), dark banners, page-banner with image overlay.'
   },
 
   // ============================================================================

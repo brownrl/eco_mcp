@@ -23,13 +23,13 @@ All 9 phases of the ECL MCP enhancement plan have been implemented and verified.
 ### ✅ Phase 1: Web Crawler & Database Foundation
 **Status: PASSED**
 
-| Component | Expected | Actual | Status |
-|-----------|----------|--------|--------|
-| Pages crawled | 169 | 169 | ✅ |
-| Code examples | 756 | 756 | ✅ |
-| Content sections | >0 | 685 | ✅ |
-| FTS5 tables | >0 | 1 | ✅ |
-| Database file | Exists | Yes | ✅ |
+| Component        | Expected | Actual | Status |
+| ---------------- | -------- | ------ | ------ |
+| Pages crawled    | 169      | 169    | ✅      |
+| Code examples    | 756      | 756    | ✅      |
+| Content sections | >0       | 685    | ✅      |
+| FTS5 tables      | >0       | 1      | ✅      |
+| Database file    | Exists   | Yes    | ✅      |
 
 **Key Features:**
 - Resumable crawler with 100% success rate
@@ -41,16 +41,16 @@ All 9 phases of the ECL MCP enhancement plan have been implemented and verified.
 ### ✅ Phase 2: Enhanced Database Schema
 **Status: PASSED**
 
-| Table | Expected | Actual | Status |
-|-------|----------|--------|--------|
-| component_metadata | 169 | 169 | ✅ |
-| component_api | 30 | 30 | ✅ |
-| design_tokens | 61 | 61 | ✅ |
-| usage_guidance | 520 | 520 | ✅ |
-| component_tags | 1,366 | 1,366 | ✅ |
-| enhanced_code_examples | 756 | 756 | ✅ |
-| accessibility_requirements | 783 | 783 | ✅ |
-| component_relationships | 0 | 0 | ✅ |
+| Table                      | Expected | Actual | Status |
+| -------------------------- | -------- | ------ | ------ |
+| component_metadata         | 169      | 169    | ✅      |
+| component_api              | 30       | 30     | ✅      |
+| design_tokens              | 61       | 61     | ✅      |
+| usage_guidance             | 520      | 520    | ✅      |
+| component_tags             | 1,366    | 1,366  | ✅      |
+| enhanced_code_examples     | 756      | 756    | ✅      |
+| accessibility_requirements | 783      | 783    | ✅      |
+| component_relationships    | 0        | 0      | ✅      |
 
 **Total Records:** 3,495 structured records across 8 new tables
 
@@ -277,18 +277,18 @@ npm install -g git+https://github.com/brownrl/eco_mcp.git
 
 ## Comprehensive Test Summary
 
-| Phase | Component | Tests | Passed | Failed | Success Rate |
-|-------|-----------|-------|--------|--------|--------------|
-| 1 | Database Foundation | 5 | 5 | 0 | 100% |
-| 2 | Enhanced Schema | 8 | 8 | 0 | 100% |
-| 3 | Search Tools | Auto | All | None | 100% |
-| 4 | Validation Tools | 12 | 12 | 0 | 100% |
-| 5 | Generator Tools | 18 | 18 | 0 | 100% |
-| 6 | Relationship Tools | 27 | 27 | 0 | 100% |
-| 7 | Design Tokens | 52 | 52 | 0 | 100% |
-| 8 | Performance | 21 | 21 | 0 | 100% |
-| 9 | Production Readiness | 5 | 5 | 0 | 100% |
-| **TOTAL** | **All Phases** | **148+** | **148** | **0** | **100%** |
+| Phase     | Component            | Tests    | Passed  | Failed | Success Rate |
+| --------- | -------------------- | -------- | ------- | ------ | ------------ |
+| 1         | Database Foundation  | 5        | 5       | 0      | 100%         |
+| 2         | Enhanced Schema      | 8        | 8       | 0      | 100%         |
+| 3         | Search Tools         | Auto     | All     | None   | 100%         |
+| 4         | Validation Tools     | 12       | 12      | 0      | 100%         |
+| 5         | Generator Tools      | 18       | 18      | 0      | 100%         |
+| 6         | Relationship Tools   | 27       | 27      | 0      | 100%         |
+| 7         | Design Tokens        | 52       | 52      | 0      | 100%         |
+| 8         | Performance          | 21       | 21      | 0      | 100%         |
+| 9         | Production Readiness | 5        | 5       | 0      | 100%         |
+| **TOTAL** | **All Phases**       | **148+** | **148** | **0**  | **100%**     |
 
 ---
 

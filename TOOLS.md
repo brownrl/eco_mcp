@@ -13,6 +13,7 @@ Complete reference for all available tools in the Europa Component Library MCP S
 - **[Design Tokens](#design-tokens)** - Search design system tokens
 - **[Validation & Diagnostics](#validation--diagnostics)** - Validate components, check accessibility, analyze code quality
 - **[Typography Best Practices](#typography-best-practices)** - Critical ECL font inheritance guidance
+- **[Link Contrast Best Practices](#link-contrast-best-practices)** - Prevent blue-on-blue footer link issues
 - **[Code Generation](#code-generation)** - Generate runnable examples, customize components, create playgrounds
 
 ---
@@ -1246,6 +1247,165 @@ const guidance = await ecl_get_component_guidance({
 // - do: Typography class usage guidance
 // - note: Three approaches to ensure Arial font
 ```
+
+---
+
+## Link Contrast Best Practices
+
+### Critical: Blue-on-Blue Footer Link Issue
+
+**Problem:** ECL's default link color is blue (`#3860ed`) designed for white/light backgrounds. The Site Footer component has a dark blue background (`#004494`), creating **invisible blue-on-blue links** that fail WCAG contrast requirements.
+
+**Solution:** Always use `ecl-link--inverted` class for links on dark backgrounds.
+
+#### The Common Mistake
+
+```html
+<!-- ❌ WRONG: Blue links invisible on dark footer -->
+<footer class="ecl-site-footer">
+  <div class="ecl-footer__content">
+    <a href="#" class="ecl-link">About us</a>
+    <a href="#" class="ecl-link">Contact</a>
+    <a href="#" class="ecl-link">Privacy</a>
+  </div>
+</footer>
+```
+
+**Result:** Users cannot see the links. WCAG 1.4.3 failure.
+
+#### The Correct Approach
+
+```html
+<!-- ✅ CORRECT: White links on dark footer -->
+<footer class="ecl-site-footer">
+  <div class="ecl-footer__content">
+    <a href="#" class="ecl-link ecl-link--inverted">About us</a>
+    <a href="#" class="ecl-link ecl-link--inverted">Contact</a>
+    <a href="#" class="ecl-link ecl-link--inverted">Privacy</a>
+  </div>
+</footer>
+```
+
+**Result:** White links clearly visible on dark background.
+
+### When to Use `ecl-link--inverted`
+
+**Always use inverted links on these components:**
+
+1. **Site Footer** - Dark blue background (`#004494`)
+   ```html
+   <footer class="ecl-site-footer">
+     <a href="#" class="ecl-link ecl-link--inverted">Link</a>
+   </footer>
+   ```
+
+2. **Page Header (dark variant)** - Dark background
+   ```html
+   <header class="ecl-page-header ecl-page-header--dark">
+     <a href="#" class="ecl-link ecl-link--inverted">Link</a>
+   </header>
+   ```
+
+3. **Banners with Dark Backgrounds** - Dark overlays
+   ```html
+   <div class="ecl-banner" style="background: #004494">
+     <a href="#" class="ecl-link ecl-link--inverted">Link</a>
+   </div>
+   ```
+
+4. **Any Component with Dark Background** - When background color is dark
+   - Rule of thumb: If background is darker than `#888`, use inverted
+
+### Color Reference
+
+| Context | Background | Link Class | Link Color | Contrast Ratio |
+|---------|-----------|------------|------------|----------------|
+| Light background | `#fff` (white) | `ecl-link` | `#3860ed` (blue) | ✅ 4.8:1 |
+| Dark background | `#004494` (dark blue) | `ecl-link--inverted` | `#fff` (white) | ✅ 8.6:1 |
+| **❌ WRONG** | `#004494` (dark blue) | `ecl-link` | `#3860ed` (blue) | ❌ 1.8:1 FAIL |
+
+### Validation Patterns
+
+The MCP server includes 3 validation patterns to detect this issue:
+
+**1. Footer Link Without Inverted** (Error)
+```html
+<!-- ❌ Triggers error -->
+<footer>
+  <a href="#" class="ecl-link">Missing inverted</a>
+</footer>
+
+<!-- ✅ Correct -->
+<footer>
+  <a href="#" class="ecl-link ecl-link--inverted">Has inverted</a>
+</footer>
+```
+
+**2. Link in Dark Component** (Error)
+Detects links in footer, dark page-header, or banners without inverted class.
+
+**3. Standalone Link Contrast Check** (Info)
+Reminds you to verify link contrast when validating any link component.
+
+### Querying Link Contrast Guidance
+
+Query link contrast guidance using `ecl_get_component_guidance`:
+
+```javascript
+// Get Link component guidance
+const linkGuidance = await ecl_get_component_guidance({
+  component: "Links"
+});
+
+// Returns:
+// - caveat: Link contrast issue explanation
+// - best-practice: When to use ecl-link--inverted
+// - do: Examples of correct usage
+
+// Get Site Footer guidance
+const footerGuidance = await ecl_get_component_guidance({
+  component: "Site footer"
+});
+
+// Returns:
+// - caveat: Footer link contrast warning
+// - do: Instructions to apply inverted class to ALL footer links
+```
+
+### Real-World Example
+
+An AI agent building a footer might generate:
+```html
+<footer class="ecl-site-footer">
+  <div class="ecl-footer__container">
+    <!-- Navigation section -->
+    <section>
+      <h2>About the Commission</h2>
+      <a href="#" class="ecl-link ecl-link--inverted">Priorities</a>
+      <a href="#" class="ecl-link ecl-link--inverted">Policies</a>
+    </section>
+    
+    <!-- Contact section -->
+    <section>
+      <h2>Contact</h2>
+      <a href="#" class="ecl-link ecl-link--inverted">Contact form</a>
+      <a href="#" class="ecl-link ecl-link--inverted">Email us</a>
+    </section>
+    
+    <!-- Social media -->
+    <section>
+      <a href="#" class="ecl-link ecl-link--inverted">Facebook</a>
+      <a href="#" class="ecl-link ecl-link--inverted">Twitter</a>
+    </section>
+  </div>
+</footer>
+```
+
+**Key points:**
+- ✅ Every single link has `ecl-link--inverted`
+- ✅ Applies to ALL footer sections (navigation, contact, social media)
+- ✅ Even logo links need inverted class
+- ✅ No exceptions - all links on dark backgrounds need inverted
 
 ---
 

@@ -1159,14 +1159,14 @@ design_tokens (
 
 ### Statistics
 
-| Metric                 | Details                                         |
-| ---------------------- | ----------------------------------------------- |
-| Version                | 2.0.0                                           |
-| Installation method    | `npm install git+https://github.com/...`       |
-| Supported MCP clients  | Claude Desktop, Cline, Cursor, others          |
-| Documentation files    | 3 new (INSTALLATION.md, CHANGELOG.md, updated) |
-| CLI commands           | ecl-mcp, ecl-mcp --help, ecl-mcp --version     |
-| Package enhancements   | bin script, repository field, 15 keywords      |
+| Metric                | Details                                        |
+| --------------------- | ---------------------------------------------- |
+| Version               | 2.0.0                                          |
+| Installation method   | `npm install git+https://github.com/...`       |
+| Supported MCP clients | Claude Desktop, Cline, Cursor, others          |
+| Documentation files   | 3 new (INSTALLATION.md, CHANGELOG.md, updated) |
+| CLI commands          | ecl-mcp, ecl-mcp --help, ecl-mcp --version     |
+| Package enhancements  | bin script, repository field, 15 keywords      |
 
 ### Files Created/Modified
 
@@ -1253,15 +1253,15 @@ npx ecl-mcp
 
 ### Documentation Overview
 
-| File              | Lines | Purpose                                    |
-| ----------------- | ----- | ------------------------------------------ |
-| INSTALLATION.md   | 340   | Complete installation and setup guide      |
-| CHANGELOG.md      | 350   | Version history and upgrade guide          |
-| README.md         | ~500  | Overview and quick start                   |
-| TOOLS.md          | ~800  | Complete tool reference (40+ tools)        |
-| AGENTS.md         | ~500  | AI agent development guide                 |
-| SETUP.md          | ~200  | ECL setup instructions                     |
-| PROGRESS.md       | 1141+ | Development progress and session log       |
+| File            | Lines | Purpose                               |
+| --------------- | ----- | ------------------------------------- |
+| INSTALLATION.md | 340   | Complete installation and setup guide |
+| CHANGELOG.md    | 350   | Version history and upgrade guide     |
+| README.md       | ~500  | Overview and quick start              |
+| TOOLS.md        | ~800  | Complete tool reference (40+ tools)   |
+| AGENTS.md       | ~500  | AI agent development guide            |
+| SETUP.md        | ~200  | ECL setup instructions                |
+| PROGRESS.md     | 1141+ | Development progress and session log  |
 
 ### Technical Implementation
 
