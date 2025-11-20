@@ -3,6 +3,7 @@
  */
 
 import Database from 'better-sqlite3';
+import { searchStaticGuidance, generateSuggestions } from './static-guidance.js';
 
 /**
  * Get component guidance (when to use, best practices, do's, don'ts)
@@ -23,7 +24,7 @@ export function getComponentGuidance(db, componentIdentifier) {
         WHERE cm.component_name LIKE ? OR p.title LIKE ?
         LIMIT 1
       `).get(`%${componentIdentifier}%`, `%${componentIdentifier}%`);
-      
+
       if (!page) {
         return {
           success: false,
@@ -177,7 +178,13 @@ export function searchGuidance(db, params = {}) {
 
     const results = db.prepare(sql).all(...queryParams);
 
-    // Group by component
+    // If no database results and we have a query, check static resources
+    let staticResults = [];
+    if (results.length === 0 && query && query.trim()) {
+      staticResults = searchStaticGuidance(query.trim());
+    }
+
+    // Group database results by component
     const grouped = results.reduce((acc, row) => {
       const key = row.component_name;
       if (!acc[key]) {
@@ -194,18 +201,26 @@ export function searchGuidance(db, params = {}) {
       return acc;
     }, {});
 
+    // Combine database and static results
+    const allResults = [...Object.values(grouped), ...staticResults];
+
+    // Generate helpful suggestions
+    const suggestions = generateSuggestions(query, allResults.length > 0);
+
     return {
       success: true,
       data: {
-        results: Object.values(grouped),
-        total_items: results.length,
+        results: allResults,
+        total_items: results.length + staticResults.length,
         component_count: Object.keys(grouped).length,
-        query: { text: query, type, component }
+        static_results_count: staticResults.length,
+        query: { text: query, type, component },
+        suggestions  // NEW: helpful next steps
       },
       metadata: {
         tool: 'search_guidance',
         execution_time_ms: Date.now() - startTime,
-        source: 'ecl-database',
+        source: staticResults.length > 0 ? 'ecl-database + static' : 'ecl-database',
         version: '2.0'
       }
     };

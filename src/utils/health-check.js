@@ -251,12 +251,14 @@ function determineOverallStatus(dbHealth, cacheHealth, perfMetrics) {
         return 'degraded';
     }
 
-    // Check cache
-    if (cacheHealth.enabled) {
+    // Check cache - only consider it degraded if actively being used with poor performance
+    if (cacheHealth.enabled && cacheHealth.entries > 0) {
         const utilization = parseFloat(cacheHealth.utilization);
         const hitRate = parseFloat(cacheHealth.hit_rate);
+        const totalRequests = cacheHealth.statistics.hits + cacheHealth.statistics.misses;
 
-        if (utilization > 95 || hitRate < 20) {
+        // Only check hit rate if we have significant traffic (>100 requests)
+        if (totalRequests > 100 && (utilization > 95 || hitRate < 20)) {
             return 'degraded';
         }
     }
