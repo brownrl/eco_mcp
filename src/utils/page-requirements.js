@@ -20,7 +20,7 @@ export function getPageRequirements(options = {}) {
         include_reset = true,
         include_optional = false,
         components = [],
-        cdn_version = '4.11.1'
+        cdn_version = '4.11.0'
     } = options;
 
     const startTime = Date.now();
@@ -129,7 +129,9 @@ export function getPageRequirements(options = {}) {
                 '📍 Add class="no-js" to <html>, JavaScript will change to "has-js"',
                 '🔧 Interactive components need data-ecl-auto-init attribute',
                 '⚡ Call ECL.autoInit() after DOM is loaded for interactive components',
-                '🎨 Icon sprites must be same-origin or served with CORS headers'
+                '🎨 Icon sprites must be same-origin or served with CORS headers',
+                '⚠️  Using CDN version 4.11.0 (latest stable v4) - verify version exists before production use',
+                '💡 Recommendation: Download and host ECL assets locally instead of using CDN'
             ],
             next_steps: [
                 '1. Copy the HTML boilerplate to start your page',
@@ -238,7 +240,7 @@ ${componentClasses.map(cls => `// const ${cls.toLowerCase()}Element = document.q
  * @param {string} version - ECL version
  * @returns {Object} Download URLs for all resources
  */
-export function getCDNResources(preset = 'ec', version = '4.11.1') {
+export function getCDNResources(preset = 'ec', version = '4.11.0') {
     const base = `https://cdn.jsdelivr.net/npm/@ecl/preset-${preset}@${version}`;
 
     return {

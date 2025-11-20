@@ -14,7 +14,7 @@
  * @param {string} options.pageTitle - Page title
  * @param {Array<string>} options.components - Component names to include
  * @param {Object} options.content - Content placeholders
- * @param {string} options.cdnVersion - ECL version (default: 4.11.1)
+ * @param {string} options.cdnVersion - ECL version (default: 4.11.0)
  * @returns {Object} Generated page
  */
 export function generateCompletePage(db, options = {}) {
@@ -26,7 +26,7 @@ export function generateCompletePage(db, options = {}) {
         pageTitle = 'European Commission Page',
         components = [],
         content = {},
-        cdnVersion = '4.11.1',
+        cdnVersion = '4.11.0',
         includeReset = true,
         includePrint = false
     } = options;

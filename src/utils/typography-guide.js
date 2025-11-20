@@ -252,7 +252,7 @@ export function getTypographyGuide() {
             execution_time_ms: Date.now() - startTime,
             source: 'ecl-static-data',
             version: '2.0',
-            ecl_version: '4.11.1'
+            ecl_version: '4.11.0'
         }
     };
 }

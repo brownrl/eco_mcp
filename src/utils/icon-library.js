@@ -7,7 +7,7 @@
 
 /**
  * ECL Icon Library
- * Based on ECL 4.11.1 icon set
+ * Based on ECL 4.11.0 icon set
  */
 const ECL_ICONS = {
     // UI Icons
@@ -89,10 +89,10 @@ export function getAllIcons() {
             allIcons.push({
                 ...icon,
                 category,
-                cdn_path_ec: `https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${icon.id}`,
-                cdn_path_eu: `https://cdn.jsdelivr.net/npm/@ecl/preset-eu@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${icon.id}`,
+                cdn_path_ec: `https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${icon.id}`,
+                cdn_path_eu: `https://cdn.jsdelivr.net/npm/@ecl/preset-eu@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${icon.id}`,
                 usage_pattern: `<svg class="ecl-icon ecl-icon--xs" focusable="false" aria-hidden="true">
-  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${icon.id}"></use>
+  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${icon.id}"></use>
 </svg>`
             });
         }
@@ -113,7 +113,7 @@ export function getAllIcons() {
             execution_time_ms: Date.now() - startTime,
             source: 'ecl-static-data',
             version: '2.0',
-            ecl_version: '4.11.1'
+            ecl_version: '4.11.0'
         }
     };
 }
@@ -143,8 +143,8 @@ export function searchIcons(query, options = {}) {
                 results.push({
                     ...icon,
                     category: cat,
-                    cdn_path_ec: `https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${cat}--${icon.id}`,
-                    cdn_path_eu: `https://cdn.jsdelivr.net/npm/@ecl/preset-eu@4.11.1/dist/images/icons/sprites/icons.svg#${cat}--${icon.id}`,
+                    cdn_path_ec: `https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${cat}--${icon.id}`,
+                    cdn_path_eu: `https://cdn.jsdelivr.net/npm/@ecl/preset-eu@4.11.0/dist/images/icons/sprites/icons.svg#${cat}--${icon.id}`,
                     usage_example: generateIconUsageExample(cat, icon.id)
                 });
             }
@@ -189,7 +189,7 @@ export function getIconById(iconId, options = {}) {
 
         if (icon) {
             const presetName = preset === 'eu' ? 'preset-eu' : 'preset-ec';
-            const cdnPath = `https://cdn.jsdelivr.net/npm/@ecl/${presetName}@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}`;
+            const cdnPath = `https://cdn.jsdelivr.net/npm/@ecl/${presetName}@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}`;
 
             return {
                 success: true,
@@ -243,13 +243,13 @@ export function getIconById(iconId, options = {}) {
 function generateIconUsageExample(category, iconId) {
     return `<!-- Standalone icon -->
 <svg class="ecl-icon ecl-icon--xs" focusable="false" aria-hidden="true">
-  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
+  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
 </svg>`;
 }
 
 function generateStandaloneIconExample(category, iconId, size) {
     return `<svg class="ecl-icon ecl-icon--${size}" focusable="false" aria-hidden="true">
-  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
+  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
 </svg>`;
 }
 
@@ -260,7 +260,7 @@ function generateButtonIconExample(category, iconId, position) {
         ? `<button class="ecl-button ecl-button--primary" type="button">
   <span class="ecl-button__container">
     <svg class="ecl-icon ecl-icon--xs ecl-button__icon ${iconClass}" focusable="false" aria-hidden="true">
-      <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
+      <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
     </svg>
     <span class="ecl-button__label" data-ecl-label>Button text</span>
   </span>
@@ -269,7 +269,7 @@ function generateButtonIconExample(category, iconId, position) {
   <span class="ecl-button__container">
     <span class="ecl-button__label" data-ecl-label>Button text</span>
     <svg class="ecl-icon ecl-icon--xs ecl-button__icon ${iconClass}" focusable="false" aria-hidden="true">
-      <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
+      <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
     </svg>
   </span>
 </button>`;
@@ -280,7 +280,7 @@ function generateIconOnlyButtonExample(category, iconId) {
   <span class="ecl-button__container">
     <span class="ecl-button__label" data-ecl-label="true">Label</span>
     <svg class="ecl-icon ecl-icon--xs ecl-button__icon" focusable="false" aria-hidden="true">
-      <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
+      <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
     </svg>
   </span>
 </button>`;
@@ -289,13 +289,13 @@ function generateIconOnlyButtonExample(category, iconId) {
 function generateRotationExamples(category, iconId) {
     return {
         rotate_90: `<svg class="ecl-icon ecl-icon--xs ecl-icon--rotate-90" focusable="false" aria-hidden="true">
-  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
+  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
 </svg>`,
         rotate_180: `<svg class="ecl-icon ecl-icon--xs ecl-icon--rotate-180" focusable="false" aria-hidden="true">
-  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
+  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
 </svg>`,
         rotate_270: `<svg class="ecl-icon ecl-icon--xs ecl-icon--rotate-270" focusable="false" aria-hidden="true">
-  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.1/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
+  <use xlink:href="https://cdn.jsdelivr.net/npm/@ecl/preset-ec@4.11.0/dist/images/icons/sprites/icons.svg#${category}--${iconId}"></use>
 </svg>`
     };
 }
