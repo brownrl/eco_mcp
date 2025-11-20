@@ -328,6 +328,8 @@ Site Header, Page Header, Site Footer
 *Needs refinement in future iterations
 ```
 
+> **⚠️ IMPORTANT**: The database file is named `ecl-database.sqlite` (NOT `ecl-database.db`). Using the wrong extension will create an empty database. See [DATABASE-README.md](DATABASE-README.md) for details.
+
 ## Example Use Cases
 
 ### Finding and Understanding Components

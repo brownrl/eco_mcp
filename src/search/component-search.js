@@ -209,7 +209,7 @@ export function searchComponents(db, params = {}) {
         // Check against all expanded queries for exact matches
         expandedQueries.forEach(expandedQuery => {
           const expLower = expandedQuery.toLowerCase();
-          
+
           // 1. Exact full phrase match (Highest)
           if (titleLower === expLower || nameLower === expLower) score += 1000;
 
@@ -224,27 +224,27 @@ export function searchComponents(db, params = {}) {
         let matchedWords = 0;
         let titleMatchedWords = 0;
         let nameMatchedWords = 0;
-        
+
         allSearchTerms.forEach(term => {
           if (!term || term.length < 2) return; // Skip very short terms
-          
+
           const inTitle = titleLower.includes(term);
           const inName = nameLower.includes(term);
-          
+
           if (inTitle || inName) {
             matchedWords++;
             if (inTitle) titleMatchedWords++;
             if (inName) nameMatchedWords++;
-            
+
             score += 100; // Base points for word match
 
             // Bonus for exact word match (not partial)
             const titleWords = titleLower.split(/\s+/);
             const nameWords = nameLower.split(/\s+/);
-            
+
             if (titleWords.includes(term)) score += 50;
             if (nameWords.includes(term)) score += 50;
-            
+
             // Bonus for starting with the word
             if (titleWords.some(w => w.startsWith(term))) score += 25;
             if (nameWords.some(w => w.startsWith(term))) score += 25;
@@ -262,7 +262,7 @@ export function searchComponents(db, params = {}) {
         if (item.category && item.category.toLowerCase().includes(queryLower)) score += 10;
 
         // 6. Tag match (Lower priority to avoid false positives)
-        const tagMatches = item.tags.filter(t => 
+        const tagMatches = item.tags.filter(t =>
           allSearchTerms.some(term => t.toLowerCase().includes(term))
         ).length;
         score += (tagMatches * 5); // Much lower than title/name matches
@@ -334,7 +334,10 @@ export function getComponentDetails(db, identifier) {
     let component;
     if (typeof identifier === 'number' || /^\d+$/.test(identifier)) {
       component = db.prepare(`
-        SELECT p.*, cm.*
+        SELECT 
+          p.id, p.url, p.title, p.category,
+          cm.component_name, cm.component_type, cm.complexity, cm.status, cm.variant,
+          cm.requires_js, cm.framework_specific
         FROM pages p
         LEFT JOIN component_metadata cm ON p.id = cm.page_id
         WHERE p.id = ?
@@ -344,8 +347,12 @@ export function getComponentDetails(db, identifier) {
       const normalized = identifier.toLowerCase().replace(/[\s-]/g, '');
 
       // Prioritize exact match, then prefix match, then contains
+      // Use explicit column selection to avoid id column conflict between pages and component_metadata
       component = db.prepare(`
-        SELECT p.*, cm.*
+        SELECT 
+          p.id, p.url, p.title, p.category,
+          cm.component_name, cm.component_type, cm.complexity, cm.status, cm.variant,
+          cm.requires_js, cm.framework_specific
         FROM pages p
         LEFT JOIN component_metadata cm ON p.id = cm.page_id
         WHERE REPLACE(REPLACE(LOWER(cm.component_name), ' ', ''), '-', '') LIKE '%' || ? || '%'
