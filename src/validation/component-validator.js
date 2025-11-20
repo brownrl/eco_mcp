@@ -7,6 +7,7 @@
 
 import * as cheerio from 'cheerio';
 import { DIAGNOSTIC_PATTERNS, REQUIRED_ATTRIBUTES, WCAG_CRITERIA } from './patterns.js';
+import { validateEnhancedStructure } from './structure-validator.js';
 
 /**
  * Validate component usage
@@ -39,6 +40,9 @@ export async function validateComponentUsage(db, component, htmlCode, jsCode = '
 
     // Parse HTML
     const $ = cheerio.load(htmlCode);
+
+    // Run enhanced structure validation (NEW)
+    validateEnhancedStructure($, component, errors, warnings);
 
     // Run validation checks
     await runStructureValidation($, component, componentData, errors, warnings);

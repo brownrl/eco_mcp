@@ -1366,11 +1366,11 @@ const guidance = await ecl_get_component_guidance({
 
 ### Color Reference
 
-| Context | Background | Link Class | Link Color | Contrast Ratio |
-|---------|-----------|------------|------------|----------------|
-| Light background | `#fff` (white) | `ecl-link` | `#3860ed` (blue) | ✅ 4.8:1 |
-| Dark background | `#004494` (dark blue) | `ecl-link--inverted` | `#fff` (white) | ✅ 8.6:1 |
-| **❌ WRONG** | `#004494` (dark blue) | `ecl-link` | `#3860ed` (blue) | ❌ 1.8:1 FAIL |
+| Context          | Background            | Link Class           | Link Color       | Contrast Ratio |
+| ---------------- | --------------------- | -------------------- | ---------------- | -------------- |
+| Light background | `#fff` (white)        | `ecl-link`           | `#3860ed` (blue) | ✅ 4.8:1        |
+| Dark background  | `#004494` (dark blue) | `ecl-link--inverted` | `#fff` (white)   | ✅ 8.6:1        |
+| **❌ WRONG**      | `#004494` (dark blue) | `ecl-link`           | `#3860ed` (blue) | ❌ 1.8:1 FAIL   |
 
 ### Validation Patterns
 

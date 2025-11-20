@@ -10,14 +10,14 @@ const db = getDatabase(true);
 
 console.log('=== Test 1: Basic Page ===');
 const basic = Generator.generateCompletePage(db, {
-  preset: 'ec',
-  pageType: 'basic',
-  pageTitle: 'Welcome to ECL',
-  components: [],
-  content: {
-    mainHeading: 'Welcome',
-    leadParagraph: 'This is a basic ECL page'
-  }
+    preset: 'ec',
+    pageType: 'basic',
+    pageTitle: 'Welcome to ECL',
+    components: [],
+    content: {
+        mainHeading: 'Welcome',
+        leadParagraph: 'This is a basic ECL page'
+    }
 });
 
 console.log('Success:', basic.success);
@@ -29,14 +29,14 @@ console.log(basic.data.html.substring(0, 500));
 
 console.log('\n=== Test 2: Page with Components ===');
 const withComponents = Generator.generateCompletePage(db, {
-  preset: 'ec',
-  pageType: 'article',
-  pageTitle: 'ECL Article Page',
-  components: ['Breadcrumb', 'Buttons', 'Accordion'],
-  content: {
-    mainHeading: 'Article Title',
-    leadParagraph: 'Article introduction'
-  }
+    preset: 'ec',
+    pageType: 'article',
+    pageTitle: 'ECL Article Page',
+    components: ['Breadcrumb', 'Buttons', 'Accordion'],
+    content: {
+        mainHeading: 'Article Title',
+        leadParagraph: 'Article introduction'
+    }
 });
 
 console.log('Success:', withComponents.success);
@@ -46,16 +46,16 @@ console.log('Interactive components:', withComponents.data.metadata.interactiveC
 console.log('File size:', withComponents.data.metadata.fileSize, 'bytes');
 console.log('Notes:');
 withComponents.data.notes.forEach(note => {
-  console.log(`  [${note.type}] ${note.message}`);
+    console.log(`  [${note.type}] ${note.message}`);
 });
 
 console.log('\n=== Test 3: Landing Page ===');
 const landing = Generator.generateCompletePage(db, {
-  preset: 'eu',
-  pageType: 'landing',
-  pageTitle: 'EU Landing Page',
-  components: ['Site header', 'Page banner', 'Cards', 'Site footer'],
-  includePrint: true
+    preset: 'eu',
+    pageType: 'landing',
+    pageTitle: 'EU Landing Page',
+    components: ['Site header', 'Page banner', 'Cards', 'Site footer'],
+    includePrint: true
 });
 
 console.log('Success:', landing.success);

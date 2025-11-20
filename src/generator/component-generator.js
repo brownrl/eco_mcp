@@ -16,28 +16,28 @@ import * as cheerio from 'cheerio';
 export function generateComponent(db, component, options = {}) {
   try {
     const { customization = {}, framework = 'vanilla', includeComments = false } = options;
-    
+
     // Get component template
     const template = getComponentTemplate(db, component);
-    
+
     if (!template.success) {
       return template;
     }
-    
+
     // Apply customization
     const generated = applyCustomization(template.code, component, customization, includeComments);
-    
+
     // Get usage instructions
     const instructions = getUsageInstructions(db, component, customization);
-    
+
     // Get accessibility notes
     const accessibilityNotes = getAccessibilityNotes(db, component);
-    
+
     // Generate framework-specific code if needed
-    const code = framework === 'vanilla' 
-      ? generated 
+    const code = framework === 'vanilla'
+      ? generated
       : convertToFramework(generated, component, framework);
-    
+
     return {
       success: true,
       component,
@@ -47,7 +47,7 @@ export function generateComponent(db, component, options = {}) {
       accessibility_notes: accessibilityNotes,
       next_steps: generateNextSteps(component, customization)
     };
-    
+
   } catch (error) {
     return {
       success: false,
@@ -84,21 +84,21 @@ function getComponentTemplate(db, component) {
         END
       LIMIT 1
     `;
-    
+
     const template = db.prepare(query).get(component);
-    
+
     if (!template) {
       return {
         success: false,
         error: `No template found for component: ${component}`
       };
     }
-    
+
     return {
       success: true,
       code: template.code
     };
-    
+
   } catch (error) {
     return {
       success: false,
@@ -117,13 +117,13 @@ function getComponentTemplate(db, component) {
  */
 function applyCustomization(template, component, customization, includeComments) {
   const $ = cheerio.load(template, null, false);
-  
+
   const { variant, size, color, content, attributes } = customization;
-  
+
   // Find main component element
   const selector = `.ecl-${component}`;
   const $component = $(selector).first();
-  
+
   if ($component.length === 0) {
     // Return template as-is if we can't find component
     return {
@@ -132,43 +132,43 @@ function applyCustomization(template, component, customization, includeComments)
       css: null
     };
   }
-  
+
   // Apply variant
   if (variant) {
     const variantClass = `ecl-${component}--${variant}`;
     $component.addClass(variantClass);
-    
+
     if (includeComments) {
       $component.before(`<!-- Variant: ${variant} -->\n`);
     }
   }
-  
+
   // Apply size
   if (size) {
     const sizeClass = `ecl-${component}--${size}`;
     $component.addClass(sizeClass);
   }
-  
+
   // Apply custom attributes
   if (attributes) {
     Object.entries(attributes).forEach(([key, value]) => {
       $component.attr(key, value);
     });
   }
-  
+
   // Apply content customization (component-specific)
   if (content) {
     applyContentCustomization($, $component, component, content);
   }
-  
+
   // Add accessibility attributes if missing
   enhanceAccessibility($, $component, component);
-  
+
   const html = $.html();
-  
+
   // Generate JavaScript if needed
   const js = generateComponentJS(component, customization);
-  
+
   return {
     html: html,
     js: js,
@@ -188,7 +188,7 @@ function applyContentCustomization($, $component, component, content) {
   if (typeof content === 'string') {
     content = { text: content };
   }
-  
+
   switch (component.toLowerCase()) {
     case 'button':
       const buttonText = content.label || content.text;
@@ -202,7 +202,7 @@ function applyContentCustomization($, $component, component, content) {
         addIcon($, $component, content.icon, content.iconPosition || 'after');
       }
       break;
-      
+
     case 'card':
       if (content.title) {
         $component.find('.ecl-card__title').text(content.title);
@@ -217,7 +217,7 @@ function applyContentCustomization($, $component, component, content) {
         }
       }
       break;
-      
+
     case 'link':
       if (content.label) {
         $component.find('.ecl-link__label').text(content.label);
@@ -226,7 +226,7 @@ function applyContentCustomization($, $component, component, content) {
         $component.attr('href', content.href);
       }
       break;
-      
+
     default:
       // Generic content replacement
       if (content.text) {
@@ -248,7 +248,7 @@ function addIcon($, $component, iconName, position) {
       <use xlink:href="/icons.svg#${iconName}"></use>
     </svg>
   `;
-  
+
   if (position === 'before') {
     $component.prepend(iconHtml);
     $component.addClass('ecl-button--icon-before');
@@ -266,7 +266,7 @@ function addIcon($, $component, iconName, position) {
  */
 function enhanceAccessibility($, $component, component) {
   const tagName = $component.prop('tagName')?.toLowerCase();
-  
+
   // Add role if appropriate
   if (component === 'button' && tagName !== 'button') {
     $component.attr('role', 'button');
@@ -274,7 +274,7 @@ function enhanceAccessibility($, $component, component) {
       $component.attr('tabindex', '0');
     }
   }
-  
+
   // Ensure links have meaningful text
   if (tagName === 'a' && !$component.attr('aria-label')) {
     const text = $component.text().trim();
@@ -282,7 +282,7 @@ function enhanceAccessibility($, $component, component) {
       $component.attr('aria-label', `${component} link`);
     }
   }
-  
+
   // Add aria-label to icon-only buttons
   if (component === 'button' && $component.find('.ecl-icon').length > 0) {
     const hasText = $component.text().trim().length > 0;
@@ -300,11 +300,11 @@ function enhanceAccessibility($, $component, component) {
  */
 function generateComponentJS(component, customization) {
   const interactiveComponents = ['accordion', 'modal', 'dropdown', 'tabs', 'carousel'];
-  
+
   if (!interactiveComponents.includes(component.toLowerCase())) {
     return null;
   }
-  
+
   return `// Initialize ${component}
 document.addEventListener('DOMContentLoaded', function() {
   if (typeof ECL !== 'undefined' && ECL.${component}) {
@@ -325,18 +325,18 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function getUsageInstructions(db, component, customization) {
   const instructions = [];
-  
+
   instructions.push(`1. Include ECL EC stylesheet in your HTML <head>`);
   instructions.push(`2. Add the generated ${component} HTML to your page`);
-  
+
   const interactiveComponents = ['accordion', 'modal', 'dropdown', 'tabs', 'carousel'];
   if (interactiveComponents.includes(component.toLowerCase())) {
     instructions.push(`3. Include ECL EC JavaScript before closing </body>`);
     instructions.push(`4. Initialize the ${component} component (see generated JS)`);
   }
-  
+
   instructions.push(`5. Test for accessibility and responsiveness`);
-  
+
   return instructions.join('\n');
 }
 
@@ -361,17 +361,17 @@ function getAccessibilityNotes(db, component) {
         END
       LIMIT 5
     `;
-    
+
     const requirements = db.prepare(query).all(component);
-    
+
     if (requirements.length === 0) {
       return 'Follow WCAG 2.1 Level AA guidelines for accessibility.';
     }
-    
-    return requirements.map((r, i) => 
+
+    return requirements.map((r, i) =>
       `${i + 1}. ${r.requirement_text}`
     ).join('\n');
-    
+
   } catch (error) {
     return 'Follow WCAG 2.1 Level AA guidelines for accessibility.';
   }
@@ -390,11 +390,11 @@ function generateNextSteps(component, customization) {
     'Check color contrast meets WCAG standards',
     'Test with screen readers'
   ];
-  
+
   if (!customization.content) {
     steps.unshift('Replace placeholder content with real data');
   }
-  
+
   return steps;
 }
 

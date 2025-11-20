@@ -134,12 +134,12 @@ function getPageTemplate(pageType) {
  * Get HTML for requested components
  */
 function getComponentsHTML(db, components, preset) {
-  const componentData = [];
+    const componentData = [];
 
-  for (const componentName of components) {
-    try {
-      // Get component page that has HTML examples
-      const page = db.prepare(`
+    for (const componentName of components) {
+        try {
+            // Get component page that has HTML examples
+            const page = db.prepare(`
         SELECT DISTINCT p.id, p.title, p.url
         FROM pages p
         JOIN code_examples ce ON p.id = ce.page_id
@@ -149,18 +149,18 @@ function getComponentsHTML(db, components, preset) {
         LIMIT 1
       `).get(componentName);
 
-      if (!page) {
-        componentData.push({
-          name: componentName,
-          success: false,
-          html: `<!-- Component "${componentName}" not found -->`,
-          note: `Component "${componentName}" not found in database`
-        });
-        continue;
-      }
+            if (!page) {
+                componentData.push({
+                    name: componentName,
+                    success: false,
+                    html: `<!-- Component "${componentName}" not found -->`,
+                    note: `Component "${componentName}" not found in database`
+                });
+                continue;
+            }
 
-      // Get a complete example (prioritize complete, but fall back to any example)
-      const example = db.prepare(`
+            // Get a complete example (prioritize complete, but fall back to any example)
+            const example = db.prepare(`
         SELECT ce.code, ece.variant, ece.use_case, ece.complete_example
         FROM code_examples ce
         LEFT JOIN enhanced_code_examples ece ON ce.id = ece.example_id
@@ -172,35 +172,35 @@ function getComponentsHTML(db, components, preset) {
         LIMIT 1
       `).get(page.id);
 
-      if (example) {
-        componentData.push({
-          name: componentName,
-          success: true,
-          html: example.code,
-          variant: example.variant,
-          use_case: example.use_case,
-          url: page.url
-        });
-      } else {
-        componentData.push({
-          name: componentName,
-          success: false,
-          html: `<!-- No complete example found for "${componentName}" -->`,
-          note: `No complete HTML example available for "${componentName}"`
-        });
-      }
+            if (example) {
+                componentData.push({
+                    name: componentName,
+                    success: true,
+                    html: example.code,
+                    variant: example.variant,
+                    use_case: example.use_case,
+                    url: page.url
+                });
+            } else {
+                componentData.push({
+                    name: componentName,
+                    success: false,
+                    html: `<!-- No complete example found for "${componentName}" -->`,
+                    note: `No complete HTML example available for "${componentName}"`
+                });
+            }
 
-    } catch (error) {
-      componentData.push({
-        name: componentName,
-        success: false,
-        html: `<!-- Error loading "${componentName}": ${error.message} -->`,
-        note: error.message
-      });
+        } catch (error) {
+            componentData.push({
+                name: componentName,
+                success: false,
+                html: `<!-- Error loading "${componentName}": ${error.message} -->`,
+                note: error.message
+            });
+        }
     }
-  }
 
-  return componentData;
+    return componentData;
 }
 
 /**

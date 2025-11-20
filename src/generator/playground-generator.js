@@ -14,7 +14,7 @@
 export function createPlayground(db, components, options = {}) {
   try {
     const { customCode, includeAllVariants = false } = options;
-    
+
     // Validate components
     if (!components || components.length === 0) {
       return {
@@ -22,10 +22,10 @@ export function createPlayground(db, components, options = {}) {
         error: 'At least one component must be specified'
       };
     }
-    
+
     // Get examples for each component
     const componentExamples = [];
-    
+
     for (const component of components) {
       const examples = getComponentExamples(db, component, includeAllVariants);
       if (examples.length > 0) {
@@ -35,21 +35,21 @@ export function createPlayground(db, components, options = {}) {
         });
       }
     }
-    
+
     if (componentExamples.length === 0) {
       return {
         success: false,
         error: 'No examples found for specified components'
       };
     }
-    
+
     // Build playground HTML
     const html = buildPlaygroundHTML(componentExamples, customCode);
-    
+
     // Calculate file size
     const fileSize = new Blob([html]).size;
     const fileSizeKB = (fileSize / 1024).toFixed(2);
-    
+
     return {
       success: true,
       html_file: html,
@@ -58,7 +58,7 @@ export function createPlayground(db, components, options = {}) {
       components_included: components,
       examples_count: componentExamples.reduce((sum, c) => sum + c.examples.length, 0)
     };
-    
+
   } catch (error) {
     return {
       success: false,
@@ -96,9 +96,9 @@ function getComponentExamples(db, component, includeAll) {
         END
       ${includeAll ? '' : 'LIMIT 3'}
     `;
-    
+
     return db.prepare(query).all(component);
-    
+
   } catch (error) {
     return [];
   }
@@ -127,7 +127,7 @@ function buildPlaygroundHTML(componentExamples, customCode) {
         </details>
       </div>
     `).join('\n');
-    
+
     return `
       <section class="playground-section" id="${component.toLowerCase()}">
         <h2 class="playground-section__title">${component}</h2>
@@ -135,7 +135,7 @@ function buildPlaygroundHTML(componentExamples, customCode) {
       </section>
     `;
   }).join('\n');
-  
+
   return `<!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -287,9 +287,9 @@ function buildPlaygroundHTML(componentExamples, customCode) {
   
   <nav class="playground-nav">
     <ul class="playground-nav__list">
-      ${componentExamples.map(({ component }) => 
-        `<li><a href="#${component.toLowerCase()}" class="playground-nav__link">${component}</a></li>`
-      ).join('\n      ')}
+      ${componentExamples.map(({ component }) =>
+    `<li><a href="#${component.toLowerCase()}" class="playground-nav__link">${component}</a></li>`
+  ).join('\n      ')}
     </ul>
   </nav>
   

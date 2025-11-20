@@ -18,7 +18,7 @@ import * as cheerio from 'cheerio';
 export function getCompleteExample(db, component, options = {}) {
   try {
     const { exampleType, variant } = options;
-    
+
     // Find component examples
     // NOTE: p.component_name is actually the CATEGORY, p.title is the actual component name
     const query = `
@@ -51,9 +51,9 @@ export function getCompleteExample(db, component, options = {}) {
         END,
         ce.id
     `;
-    
+
     const examples = db.prepare(query).all(component);
-    
+
     if (examples.length === 0) {
       return {
         success: false,
@@ -61,50 +61,50 @@ export function getCompleteExample(db, component, options = {}) {
         suggestion: 'Try searching for the component first to verify it exists'
       };
     }
-    
+
     // Group by language
     const byLanguage = {
       html: [],
       js: [],
       css: []
     };
-    
+
     examples.forEach(ex => {
       const lang = ex.language?.toLowerCase() || 'html';
       if (byLanguage[lang]) {
         byLanguage[lang].push(ex);
       }
     });
-    
+
     // Filter by variant if specified
     let selectedExample = examples[0];
     if (variant) {
-      const variantMatch = examples.find(ex => 
+      const variantMatch = examples.find(ex =>
         ex.variant && ex.variant.toLowerCase().includes(variant.toLowerCase())
       );
       if (variantMatch) {
         selectedExample = variantMatch;
       }
     }
-    
+
     // Filter by example type if specified
     if (exampleType) {
-      const typeMatch = examples.find(ex => 
+      const typeMatch = examples.find(ex =>
         ex.use_case && ex.use_case.toLowerCase().includes(exampleType.toLowerCase())
       );
       if (typeMatch) {
         selectedExample = typeMatch;
       }
     }
-    
+
     // Get HTML example
     const htmlExample = byLanguage.html.find(ex => ex.id === selectedExample.id) || byLanguage.html[0];
     const jsExample = byLanguage.js[0];
     const cssExample = byLanguage.css[0];
-    
+
     // Analyze HTML to extract dependencies
     const dependencies = extractDependencies(htmlExample?.code || '');
-    
+
     // Build complete example
     const completeCode = buildCompleteExample({
       html: htmlExample?.code || '',
@@ -113,10 +113,10 @@ export function getCompleteExample(db, component, options = {}) {
       component,
       dependencies
     });
-    
+
     // Extract customization points
     const customizationPoints = extractCustomizationPoints(htmlExample?.code || '', component);
-    
+
     // Get related examples
     const relatedExamples = examples
       .filter(ex => ex.id !== selectedExample.id)
@@ -127,7 +127,7 @@ export function getCompleteExample(db, component, options = {}) {
         use_case: ex.use_case,
         complexity: ex.complexity
       }));
-    
+
     return {
       success: true,
       component: selectedExample.component_name,
@@ -142,7 +142,7 @@ export function getCompleteExample(db, component, options = {}) {
       related_examples: relatedExamples,
       accessibility_notes: selectedExample.accessibility_notes
     };
-    
+
   } catch (error) {
     return {
       success: false,
@@ -160,7 +160,7 @@ function extractDependencies(html) {
   const stylesheets = [];
   const scripts = [];
   const $ = cheerio.load(html);
-  
+
   // Check for ECL stylesheet references
   if (html.includes('ecl-ec.css') || html.includes('ecl-')) {
     stylesheets.push({
@@ -170,7 +170,7 @@ function extractDependencies(html) {
       required: true
     });
   }
-  
+
   // Check for ECL JavaScript references
   if (html.includes('ecl-ec.js') || html.includes('ECL.')) {
     scripts.push({
@@ -180,14 +180,14 @@ function extractDependencies(html) {
       required: true
     });
   }
-  
+
   // Check for specific component scripts
   const componentClasses = [];
   $('.ecl-accordion, .ecl-modal, .ecl-dropdown, .ecl-tabs, .ecl-carousel').each((i, el) => {
     const classes = $(el).attr('class')?.split(' ') || [];
     componentClasses.push(...classes.filter(c => c.startsWith('ecl-')));
   });
-  
+
   if (componentClasses.length > 0) {
     scripts.push({
       name: 'ECL Component JavaScript',
@@ -195,7 +195,7 @@ function extractDependencies(html) {
       required: true
     });
   }
-  
+
   return {
     stylesheets,
     scripts
@@ -250,7 +250,7 @@ function buildCompleteExample({ html, js, css, component, dependencies }) {
 function extractCustomizationPoints(html, component) {
   const points = [];
   const $ = cheerio.load(html);
-  
+
   // Common customization points
   const customizations = {
     button: [
@@ -270,19 +270,19 @@ function extractCustomizationPoints(html, component) {
       { property: 'external', description: 'External link', example_values: ['true', 'false'] }
     ]
   };
-  
+
   const componentLower = component.toLowerCase();
   if (customizations[componentLower]) {
     points.push(...customizations[componentLower]);
   }
-  
+
   // Extract from HTML classes
   const classes = [];
   $('[class*="ecl-"]').each((i, el) => {
     const classList = $(el).attr('class')?.split(' ') || [];
     classes.push(...classList.filter(c => c.startsWith('ecl-')));
   });
-  
+
   // Find variant classes
   const variantClasses = classes.filter(c => c.includes('--'));
   if (variantClasses.length > 0) {
@@ -295,7 +295,7 @@ function extractCustomizationPoints(html, component) {
       });
     });
   }
-  
+
   return points;
 }
 
@@ -307,27 +307,27 @@ function extractCustomizationPoints(html, component) {
  */
 function generateExplanation(example, dependencies) {
   const parts = [];
-  
+
   parts.push(`This is a ${example.complexity || 'standard'} example of the ${example.component_name} component.`);
-  
+
   if (example.use_case) {
     parts.push(`Use case: ${example.use_case}`);
   }
-  
+
   if (dependencies.length > 0) {
     const required = dependencies.filter(d => d.required);
     if (required.length > 0) {
       parts.push(`Required dependencies: ${required.map(d => d.name).join(', ')}`);
     }
   }
-  
+
   if (example.interactive) {
     parts.push('This component requires JavaScript for interactive functionality.');
   }
-  
+
   if (example.accessibility_notes) {
     parts.push(`Accessibility: ${example.accessibility_notes}`);
   }
-  
+
   return parts.join(' ');
 }

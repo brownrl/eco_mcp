@@ -857,6 +857,120 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: 'ecl_get_icon_library',
+        description: 'Get comprehensive ECL icon library with all available icons, categories, CDN paths, and usage examples. Returns complete list of UI, general, file type, and social media icons with proper xlink:href patterns.',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+      {
+        name: 'ecl_search_icons',
+        description: 'Search ECL icon library by name, ID, or description. Returns matching icons with CDN paths for both EC and EU presets, usage examples, and accessibility guidelines.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'Search term (icon name, ID, or description)',
+            },
+            category: {
+              type: 'string',
+              enum: ['ui', 'general', 'files', 'social'],
+              description: 'Filter by icon category',
+            },
+            limit: {
+              type: 'number',
+              description: 'Maximum results (default: 20)',
+            },
+          },
+          required: ['query'],
+        },
+      },
+      {
+        name: 'ecl_get_icon_by_id',
+        description: 'Get detailed information about a specific ECL icon including CDN paths, usage examples for different contexts (standalone, button, icon-only), rotation options, and accessibility notes.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            icon_id: {
+              type: 'string',
+              description: 'Icon ID (e.g., "search", "download", "corner-arrow")',
+            },
+            preset: {
+              type: 'string',
+              enum: ['ec', 'eu'],
+              description: 'ECL preset for CDN path (default: "ec")',
+            },
+            size: {
+              type: 'string',
+              enum: ['xs', 's', 'm', 'l'],
+              description: 'Icon size class (default: "xs")',
+            },
+          },
+          required: ['icon_id'],
+        },
+      },
+      {
+        name: 'ecl_get_typography_guide',
+        description: 'Get complete ECL typography documentation including all utility classes, font families, sizes, weights, line heights, semantic HTML usage, troubleshooting, and critical notes about ECL font-family gaps.',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+      {
+        name: 'ecl_search_typography',
+        description: 'Search ECL typography utilities by class name or usage. Returns matching heading classes, paragraph classes, font weights, text styles, and color utilities with examples.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'Search term (class name or usage description)',
+            },
+          },
+          required: ['query'],
+        },
+      },
+      {
+        name: 'ecl_get_page_structure_patterns',
+        description: 'Get common ECL page structure patterns with component hierarchies, nesting rules, and HTML templates. Includes patterns for news articles, landing pages, list pages, documentation, and search results.',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+      {
+        name: 'ecl_get_page_pattern',
+        description: 'Get detailed structure pattern for a specific page type including required/optional components, nesting hierarchy, implementation steps, and complete HTML template.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            pattern_id: {
+              type: 'string',
+              enum: ['news-article', 'landing-page', 'list-page', 'documentation-page', 'search-results'],
+              description: 'Page pattern type',
+            },
+          },
+          required: ['pattern_id'],
+        },
+      },
+      {
+        name: 'ecl_get_component_nesting_rules',
+        description: 'Get nesting rules for a specific ECL component including allowed parents, required children, position guidelines, and correct/incorrect examples.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            component_name: {
+              type: 'string',
+              description: 'Component name (e.g., "Card", "Accordion", "Site Header")',
+            },
+          },
+          required: ['component_name'],
+        },
+      },
 
       // ===== RELATIONSHIPS & DEPENDENCIES (Phase 6) =====
       {
@@ -1972,6 +2086,111 @@ For manual initialization details, check individual component documentation.
         includeReset: args.include_reset,
         includePrint: args.include_print
       });
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    // Icon Library Tools
+    if (name === 'ecl_get_icon_library') {
+      const result = Utils.getAllIcons();
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    if (name === 'ecl_search_icons') {
+      const result = Utils.searchIcons(args.query, {
+        category: args.category,
+        limit: args.limit
+      });
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    if (name === 'ecl_get_icon_by_id') {
+      const result = Utils.getIconById(args.icon_id, {
+        preset: args.preset,
+        size: args.size
+      });
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    // Typography Tools
+    if (name === 'ecl_get_typography_guide') {
+      const result = Utils.getTypographyGuide();
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    if (name === 'ecl_search_typography') {
+      const result = Utils.searchTypographyUtilities(args.query);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    // Page Structure Pattern Tools
+    if (name === 'ecl_get_page_structure_patterns') {
+      const result = Utils.getAllPagePatterns();
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    if (name === 'ecl_get_page_pattern') {
+      const result = Utils.getPagePattern(args.pattern_id);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    if (name === 'ecl_get_component_nesting_rules') {
+      const result = Utils.getComponentNestingRules(args.component_name);
       return {
         content: [
           {
