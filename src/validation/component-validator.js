@@ -44,7 +44,7 @@ export async function validateComponentUsage(db, component, htmlCode, jsCode = '
 
     // Run enhanced structure validation (NEW)
     validateEnhancedStructure($, component, errors, warnings);
-    
+
     // Run form-specific validation (NEW)
     validateFormStructure($, component, errors, warnings);
 

@@ -33,13 +33,13 @@ console.log('━━━━━━━━━━━━━━━━━━━━━━�
 
 const contactForm = Utils.getCompleteContactForm();
 if (contactForm) {
-  console.log(`✅ Contact form retrieved:`);
-  console.log(`   Title: ${contactForm.title}`);
-  console.log(`   Components: ${contactForm.included_components.length}`);
-  console.log(`   Demonstrates: ${contactForm.demonstrates.length} key features`);
-  console.log(`   Validation status: ${contactForm.validation_status}\n`);
+    console.log(`✅ Contact form retrieved:`);
+    console.log(`   Title: ${contactForm.title}`);
+    console.log(`   Components: ${contactForm.included_components.length}`);
+    console.log(`   Demonstrates: ${contactForm.demonstrates.length} key features`);
+    console.log(`   Validation status: ${contactForm.validation_status}\n`);
 } else {
-  console.log('❌ Contact form not found\n');
+    console.log('❌ Contact form not found\n');
 }
 
 // Test 3: Form Guidance
@@ -59,9 +59,9 @@ console.log(`   Template count: ${guidance.template_count}\n`);
 const helperTextGuidance = Utils.searchFormGuidance('helper text');
 console.log(`✅ Search for "helper text": ${helperTextGuidance.length} results`);
 if (helperTextGuidance.length > 0) {
-  console.log(`   Top result: ${helperTextGuidance[0].title}`);
-  console.log(`   Type: ${helperTextGuidance[0].type}`);
-  console.log(`   Priority: ${helperTextGuidance[0].priority}\n`);
+    console.log(`   Top result: ${helperTextGuidance[0].title}`);
+    console.log(`   Type: ${helperTextGuidance[0].type}`);
+    console.log(`   Priority: ${helperTextGuidance[0].priority}\n`);
 }
 
 // Test 4: Form Validation - CORRECT structure
@@ -87,9 +87,9 @@ console.log(`✅ Validation of CORRECT structure:`);
 console.log(`   Errors: ${errors.length}`);
 console.log(`   Warnings: ${warnings.length}`);
 if (errors.length === 0 && warnings.length === 0) {
-  console.log(`   ✅ Perfect! No issues found.\n`);
+    console.log(`   ✅ Perfect! No issues found.\n`);
 } else {
-  console.log(`   Issues:`, errors.concat(warnings));
+    console.log(`   Issues:`, errors.concat(warnings));
 }
 
 // Test 5: Form Validation - WRONG structure (helper text after input)
@@ -115,16 +115,16 @@ console.log(`✅ Validation of WRONG structure:`);
 console.log(`   Errors: ${errorsWrong.length}`);
 console.log(`   Warnings: ${warningsWrong.length}`);
 if (errorsWrong.length > 0) {
-  console.log(`   ✅ Correctly detected errors:`);
-  errorsWrong.forEach(e => {
-    console.log(`      - ${e.type}: ${e.message}`);
-  });
+    console.log(`   ✅ Correctly detected errors:`);
+    errorsWrong.forEach(e => {
+        console.log(`      - ${e.type}: ${e.message}`);
+    });
 }
 if (warningsWrong.length > 0) {
-  console.log(`   Warnings:`);
-  warningsWrong.forEach(w => {
-    console.log(`      - ${w.type}: ${w.message}`);
-  });
+    console.log(`   Warnings:`);
+    warningsWrong.forEach(w => {
+        console.log(`      - ${w.type}: ${w.message}`);
+    });
 }
 console.log();
 
@@ -151,10 +151,10 @@ Validation.validateFormStructure($wrongSelect, 'Select', errorsSelect, warningsS
 console.log(`✅ Validation of SELECT without container:`);
 console.log(`   Errors: ${errorsSelect.length}`);
 if (errorsSelect.length > 0) {
-  console.log(`   ✅ Correctly detected:`);
-  errorsSelect.forEach(e => {
-    console.log(`      - ${e.message}`);
-  });
+    console.log(`   ✅ Correctly detected:`);
+    errorsSelect.forEach(e => {
+        console.log(`      - ${e.message}`);
+    });
 }
 console.log();
 
@@ -176,7 +176,7 @@ console.log(`✅ Troubleshooting "helper-text" issues:`);
 console.log(`   Category: ${helperTextTrouble.issue_category}`);
 console.log(`   Fixes:`);
 helperTextTrouble.fixes.forEach(f => {
-  console.log(`      - ${f}`);
+    console.log(`      - ${f}`);
 });
 console.log();
 
@@ -197,7 +197,7 @@ console.log(`   Visual symptom checks: ${checklist.visual_checks.length}\n`);
 // Show some examples
 console.log(`Structure checks (required):`);
 checklist.structure.filter(c => c.required).forEach(c => {
-  console.log(`   - ${c.item}`);
+    console.log(`   - ${c.item}`);
 });
 console.log();
 
@@ -214,12 +214,12 @@ console.log(`   Advice count: ${troubleshooting.troubleshooting_advice.length}`)
 console.log(`   Quick fixes: ${troubleshooting.quick_fixes.length}`);
 
 if (troubleshooting.quick_fixes.length > 0) {
-  console.log(`\n   Priority fixes:`);
-  troubleshooting.quick_fixes.forEach(fix => {
-    console.log(`      [${fix.priority}] ${fix.symptom}`);
-    console.log(`         Cause: ${fix.cause}`);
-    console.log(`         Fix: ${fix.fix}`);
-  });
+    console.log(`\n   Priority fixes:`);
+    troubleshooting.quick_fixes.forEach(fix => {
+        console.log(`      [${fix.priority}] ${fix.symptom}`);
+        console.log(`         Cause: ${fix.cause}`);
+        console.log(`         Fix: ${fix.fix}`);
+    });
 }
 console.log();
 
@@ -244,9 +244,9 @@ Validation.validateFormStructure($formClass, 'Complete Forms', errorsFormClass, 
 
 console.log(`✅ Validation of form with class="ecl-form":`);
 if (errorsFormClass.some(e => e.type === 'form_structure')) {
-  console.log(`   ✅ Correctly detected: Form should not have class="ecl-form"\n`);
+    console.log(`   ✅ Correctly detected: Form should not have class="ecl-form"\n`);
 } else {
-  console.log(`   ❌ Did not detect form class issue\n`);
+    console.log(`   ❌ Did not detect form class issue\n`);
 }
 
 // Summary

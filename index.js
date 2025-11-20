@@ -2345,11 +2345,11 @@ For manual initialization details, check individual component documentation.
       const $ = cheerio.load(args.html_code);
       const errors = [];
       const warnings = [];
-      
+
       Validation.validateFormStructure($, args.component, errors, warnings);
-      
+
       const troubleshooting = Validation.getFormTroubleshooting(errors, warnings);
-      
+
       return {
         content: [
           {
