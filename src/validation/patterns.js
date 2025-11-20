@@ -177,6 +177,50 @@ export const DIAGNOSTIC_PATTERNS = {
   },
 
   // ============================================================================
+  // Typography and Font Issues
+  // ============================================================================
+
+  'missing-typography-class': {
+    pattern: /<(h[1-6]|p)[^>]*(?!class="[^"]*ecl-u-type-)/i,
+    severity: 'warning',
+    components: ['*'],
+    message: 'ECL typography: Headings and paragraphs should use ecl-u-type-* classes for consistent fonts',
+    fix: 'Add ECL typography utility class (e.g., ecl-u-type-heading-2, ecl-u-type-paragraph)',
+    example: '<h2 class="ecl-u-type-heading-2">Heading</h2> or <p class="ecl-u-type-paragraph">Text</p>',
+    note: 'Without ECL typography classes, elements may use browser default fonts instead of Arial. Alternative: Add font-family: arial, sans-serif to container.'
+  },
+
+  'body-without-font': {
+    pattern: /<body[^>]*(?!style="[^"]*font-family|class="[^"]*ecl-)/i,
+    severity: 'warning',
+    components: ['*'],
+    message: 'ECL pages should set Arial font on body or main container',
+    fix: 'Add style="font-family: arial, sans-serif" to body or main container, or use ECL typography classes throughout',
+    example: '<body style="font-family: arial, sans-serif"> or <main style="font-family: arial, sans-serif">',
+    note: 'ECL CSS defines --ecl-font-family-default variable but elements need explicit font-family or ECL utility classes to inherit it.'
+  },
+
+  'main-without-font': {
+    pattern: /<main[^>]*(?!style="[^"]*font-family|class="[^"]*ecl-)/i,
+    severity: 'info',
+    components: ['*'],
+    message: 'Best practice: Set Arial font on main container for consistent ECL typography',
+    fix: 'Add style="font-family: arial, sans-serif" to main element',
+    example: '<main style="font-family: arial, sans-serif">',
+    note: 'Ensures all child elements inherit ECL Arial font without needing utility classes on every element.'
+  },
+
+  'hardcoded-fonts': {
+    pattern: /font-family:\s*["']?(times|georgia|verdana|courier|helvetica|tahoma)/i,
+    severity: 'error',
+    components: ['*'],
+    message: 'Non-ECL fonts detected. ECL uses Arial as primary typeface',
+    fix: 'Replace with Arial or use ECL typography utility classes',
+    example: 'style="font-family: arial, sans-serif" or class="ecl-u-type-paragraph"',
+    note: 'ECL design system requires Arial for all text content.'
+  },
+
+  // ============================================================================
   // Responsive and Layout
   // ============================================================================
 
