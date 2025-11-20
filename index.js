@@ -813,6 +813,50 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: 'ecl_generate_complete_page',
+        description: 'Generate a complete, ready-to-use ECL page with all boilerplate, selected components, and initialization code. Returns full HTML file that can be saved and opened in a browser. Includes DOCTYPE, CSS links, JavaScript initialization, and font fixes.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            preset: {
+              type: 'string',
+              enum: ['ec', 'eu'],
+              description: 'ECL preset: "ec" or "eu". Default: "ec"',
+            },
+            page_type: {
+              type: 'string',
+              enum: ['basic', 'landing', 'article', 'search-results', 'list-page'],
+              description: 'Page template type. Default: "basic"',
+            },
+            page_title: {
+              type: 'string',
+              description: 'Page title for <title> tag. Default: "European Commission Page"',
+            },
+            components: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Array of component names to include (e.g., ["Site header", "Breadcrumb", "Button"])',
+            },
+            content: {
+              type: 'object',
+              description: 'Content placeholders: { mainHeading, leadParagraph }',
+            },
+            cdn_version: {
+              type: 'string',
+              description: 'ECL version (default: "4.11.1")',
+            },
+            include_reset: {
+              type: 'boolean',
+              description: 'Include font-family reset fix (default: true)',
+            },
+            include_print: {
+              type: 'boolean',
+              description: 'Include print stylesheet (default: false)',
+            },
+          },
+        },
+      },
 
       // ===== RELATIONSHIPS & DEPENDENCIES (Phase 6) =====
       {
@@ -1907,6 +1951,27 @@ For manual initialization details, check individual component documentation.
         args.preset,
         args.version
       );
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(result, null, 2),
+          },
+        ],
+      };
+    }
+
+    if (name === 'ecl_generate_complete_page') {
+      const result = Generator.generateCompletePage(db, {
+        preset: args.preset,
+        pageType: args.page_type,
+        pageTitle: args.page_title,
+        components: args.components || [],
+        content: args.content || {},
+        cdnVersion: args.cdn_version,
+        includeReset: args.include_reset,
+        includePrint: args.include_print
+      });
       return {
         content: [
           {
