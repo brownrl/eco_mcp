@@ -1,0 +1,12 @@
+{
+  "$schema": "https://charm.land/crush.json",
+  "mcp": {
+    "ecl": {
+      "command": "npx",
+      "type": "stdio",
+      "args": [
+        "ecl-mcp"
+      ]
+    }
+  }
+}

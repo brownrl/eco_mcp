@@ -1,0 +1,28 @@
+{
+  "name": "ecl_mcp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "ecl-mcp": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brownrl/eco_mcp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/brownrl/eco_mcp/issues"
+  },
+  "homepage": "https://github.com/brownrl/eco_mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
+    "sqlite3": "^5.1.7"
+  }
+}
