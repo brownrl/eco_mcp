@@ -51,6 +51,59 @@ const COMPONENT_SYNONYMS = {
 };
 
 /**
+ * Detect special query intents (variants, options, nesting, etc.)
+ * @param {string} query - Search query
+ * @returns {Object|null} - Intent detection result with component name and intent type
+ */
+function detectQueryIntent(query) {
+  const queryLower = query.toLowerCase().trim();
+  
+  // Intent keywords
+  const variantKeywords = ['variant', 'variants', 'type', 'types', 'kind', 'kinds', 'option', 'options', 'style', 'styles'];
+  const nestingKeywords = ['inside', 'within', 'contain', 'contains', 'child', 'children', 'nested', 'nesting'];
+  const exampleKeywords = ['example', 'examples', 'sample', 'samples', 'demo', 'demos'];
+  
+  // Check for variant queries: "button variants", "card types", "icon options"
+  const variantPattern = new RegExp(`(\\w+)\\s+(${variantKeywords.join('|')})`, 'i');
+  const variantMatch = queryLower.match(variantPattern);
+  
+  if (variantMatch) {
+    return {
+      intent: 'variants',
+      component: variantMatch[1],
+      suggestion: `Use ecl_get_component with include: ["variants"] to discover ${variantMatch[1]} variants`
+    };
+  }
+  
+  // Check for nesting queries: "what goes inside card", "button children"
+  const nestingPattern = new RegExp(`(${nestingKeywords.join('|')})\\s+(\\w+)|\\b(\\w+)\\s+(${nestingKeywords.join('|')})`, 'i');
+  const nestingMatch = queryLower.match(nestingPattern);
+  
+  if (nestingMatch) {
+    const component = nestingMatch[2] || nestingMatch[3];
+    return {
+      intent: 'nesting',
+      component: component,
+      suggestion: `Use ecl_get_component with include: ["nesting"] to analyze ${component} nesting patterns`
+    };
+  }
+  
+  // Check for example queries: "button examples", "card samples"
+  const examplePattern = new RegExp(`(\\w+)\\s+(${exampleKeywords.join('|')})`, 'i');
+  const exampleMatch = queryLower.match(examplePattern);
+  
+  if (exampleMatch) {
+    return {
+      intent: 'examples',
+      component: exampleMatch[1],
+      suggestion: `Use ecl_get_component with include: ["examples"] or ecl_search with type: "example" to find ${exampleMatch[1]} examples`
+    };
+  }
+  
+  return null;
+}
+
+/**
  * Expand query with synonyms
  * @param {string} query - Original search query
  * @returns {Array<string>} - Array of queries including synonyms
@@ -97,6 +150,9 @@ export function searchComponents(db, params = {}) {
   } = params;
 
   try {
+    // Detect special query intents (variants, nesting, examples)
+    const intent = query ? detectQueryIntent(query) : null;
+    
     let sql = `
       SELECT DISTINCT
         p.id,
@@ -285,7 +341,7 @@ export function searchComponents(db, params = {}) {
     // Apply limit
     enhanced = enhanced.slice(0, limit);
 
-    return {
+    const response = {
       success: true,
       data: {
         results: enhanced,
@@ -305,6 +361,15 @@ export function searchComponents(db, params = {}) {
         version: '2.0'
       }
     };
+
+    // Add intent detection suggestion if query had special intent and no results
+    if (intent && enhanced.length === 0) {
+      response.data.suggestion = intent.suggestion;
+      response.data.detected_intent = intent.intent;
+      response.data.component_hint = intent.component;
+    }
+
+    return response;
 
   } catch (error) {
     return {

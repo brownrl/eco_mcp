@@ -87,23 +87,23 @@ export async function handleToolCall(name, args, eclData) {
             if (include.includes('examples')) {
                 results.examples = Search.getComponentExamples(db, componentId);
             }
-            
+
             if (include.includes('guidance')) {
                 results.guidance = Search.getComponentGuidance(db, componentId);
             }
-            
+
             if (include.includes('nesting')) {
                 // Use introspection to analyze nesting patterns from code
                 const componentName = detailsData ? detailsData.component_name : component;
                 results.nesting = Introspection.analyzeComponentNesting(db, componentName);
             }
-            
+
             if (include.includes('variants')) {
                 // Use introspection to discover variants from examples
                 const componentName = detailsData ? detailsData.component_name : component;
                 results.variants = Introspection.discoverComponentVariants(db, componentName);
             }
-            
+
             if (include.includes('pages')) {
                 // Get all related pages (usage, code, api, playground)
                 const componentName = detailsData ? detailsData.component_name : component;
