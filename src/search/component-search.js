@@ -50,9 +50,13 @@ export function searchComponents(db, params = {}) {
 
     // Full-text search if query provided
     if (query && query.trim()) {
-      // Create a broader search pattern for FTS (treat spaces as OR)
-      // This ensures we get candidates that match ANY of the terms
-      const ftsQuery = query.trim().replace(/\s+/g, ' OR ');
+      // Escape FTS special characters and handle hyphens
+      // Replace hyphens with spaces for FTS matching
+      const sanitized = query.trim().replace(/-/g, ' ');
+      // Escape quotes and other FTS special characters
+      const escaped = sanitized.replace(/"/g, '""');
+      // Create FTS query - use quoted phrase for exact matching
+      const ftsQuery = `"${escaped}"`;
 
       sql += ` AND (
         p.id IN (
@@ -239,14 +243,23 @@ export function getComponentDetails(db, identifier) {
       // Normalize the search term: lowercase, remove spaces and hyphens
       const normalized = identifier.toLowerCase().replace(/[\s-]/g, '');
 
+      // Prioritize exact match, then prefix match, then contains
       component = db.prepare(`
         SELECT p.*, cm.*
         FROM pages p
         LEFT JOIN component_metadata cm ON p.id = cm.page_id
         WHERE REPLACE(REPLACE(LOWER(cm.component_name), ' ', ''), '-', '') LIKE '%' || ? || '%'
            OR REPLACE(REPLACE(LOWER(p.title), ' ', ''), '-', '') LIKE '%' || ? || '%'
+        ORDER BY
+          CASE
+            WHEN REPLACE(REPLACE(LOWER(cm.component_name), ' ', ''), '-', '') = ? THEN 1
+            WHEN REPLACE(REPLACE(LOWER(p.title), ' ', ''), '-', '') = ? THEN 1
+            WHEN REPLACE(REPLACE(LOWER(cm.component_name), ' ', ''), '-', '') LIKE ? || '%' THEN 2
+            WHEN REPLACE(REPLACE(LOWER(p.title), ' ', ''), '-', '') LIKE ? || '%' THEN 2
+            ELSE 3
+          END
         LIMIT 1
-      `).get(normalized, normalized);
+      `).get(normalized, normalized, normalized, normalized, normalized, normalized);
     }
 
     if (!component) {

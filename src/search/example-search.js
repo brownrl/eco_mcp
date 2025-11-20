@@ -229,13 +229,23 @@ export function getComponentExamples(db, componentIdentifier) {
       // Normalize the search term: lowercase, remove spaces and hyphens
       const normalized = componentIdentifier.toLowerCase().replace(/[\s-]/g, '');
 
+      // Prioritize exact match, then prefix match, then contains
       const page = db.prepare(`
-        SELECT p.id FROM pages p
+        SELECT p.id
+        FROM pages p
         LEFT JOIN component_metadata cm ON p.id = cm.page_id
         WHERE REPLACE(REPLACE(LOWER(cm.component_name), ' ', ''), '-', '') LIKE '%' || ? || '%'
            OR REPLACE(REPLACE(LOWER(p.title), ' ', ''), '-', '') LIKE '%' || ? || '%'
+        ORDER BY
+          CASE
+            WHEN REPLACE(REPLACE(LOWER(cm.component_name), ' ', ''), '-', '') = ? THEN 1
+            WHEN REPLACE(REPLACE(LOWER(p.title), ' ', ''), '-', '') = ? THEN 1
+            WHEN REPLACE(REPLACE(LOWER(cm.component_name), ' ', ''), '-', '') LIKE ? || '%' THEN 2
+            WHEN REPLACE(REPLACE(LOWER(p.title), ' ', ''), '-', '') LIKE ? || '%' THEN 2
+            ELSE 3
+          END
         LIMIT 1
-      `).get(normalized, normalized);
+      `).get(normalized, normalized, normalized, normalized, normalized, normalized);
 
       if (!page) {
         return {
