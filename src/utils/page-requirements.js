@@ -20,7 +20,7 @@ export function getPageRequirements(options = {}) {
         include_reset = true,
         include_optional = false,
         components = [],
-        cdn_version = '4.11.0'
+        cdn_version = '4.11.1'
     } = options;
 
     const startTime = Date.now();
@@ -40,13 +40,14 @@ export function getPageRequirements(options = {}) {
         );
     });
 
-    // Build CDN URLs
-    const cdnBase = `https://cdn.jsdelivr.net/npm/@ecl/preset-${preset}@${cdn_version}`;
+    // Build CDN URLs - Using official European Commission CDN
+    // Note: jsdelivr does not have version 4.11.1 (website-only release)
+    const cdnBase = `https://cdn1.fpfis.tech.ec.europa.eu/ecl/v${cdn_version}/${preset}`;
 
     const stylesheets = [
         {
             name: `ECL ${preset.toUpperCase()} Main Styles`,
-            url: `${cdnBase}/dist/styles/ecl-${preset}.css`,
+            url: `${cdnBase}/styles/ecl-${preset}.css`,
             media: 'screen',
             required: true,
             description: 'Core ECL styles including all components'
@@ -56,7 +57,7 @@ export function getPageRequirements(options = {}) {
     if (include_reset) {
         stylesheets.unshift({
             name: `ECL ${preset.toUpperCase()} Reset/Normalize`,
-            url: `${cdnBase}/dist/styles/optional/ecl-reset.css`,
+            url: `${cdnBase}/styles/optional/ecl-reset.css`,
             media: 'screen',
             required: false,
             description: 'CSS reset based on normalize.css - recommended for new projects'
@@ -66,7 +67,7 @@ export function getPageRequirements(options = {}) {
     if (include_optional) {
         stylesheets.push({
             name: 'ECL Print Styles',
-            url: `${cdnBase}/dist/styles/ecl-${preset}-print.css`,
+            url: `${cdnBase}/styles/ecl-${preset}-print.css`,
             media: 'print',
             required: false,
             description: 'Optimized styles for printing'
@@ -78,7 +79,7 @@ export function getPageRequirements(options = {}) {
     if (needsJS) {
         scripts.push({
             name: `ECL ${preset.toUpperCase()} JavaScript`,
-            url: `${cdnBase}/dist/scripts/ecl-${preset}.js`,
+            url: `${cdnBase}/scripts/ecl-${preset}.js`,
             required: true,
             defer: true,
             description: 'ECL component JavaScript for interactive elements',
@@ -130,7 +131,8 @@ export function getPageRequirements(options = {}) {
                 '🔧 Interactive components need data-ecl-auto-init attribute',
                 '⚡ Call ECL.autoInit() after DOM is loaded for interactive components',
                 '🎨 Icon sprites must be same-origin or served with CORS headers',
-                '⚠️  Using CDN version 4.11.0 (latest stable v4) - verify version exists before production use',
+                '✅ Using official EC CDN version 4.11.1 (latest website version)',
+                '⚠️  Note: jsdelivr CDN does NOT have v4.11.1 (website-only release)',
                 '💡 Recommendation: Download and host ECL assets locally instead of using CDN'
             ],
             next_steps: [
@@ -240,8 +242,8 @@ ${componentClasses.map(cls => `// const ${cls.toLowerCase()}Element = document.q
  * @param {string} version - ECL version
  * @returns {Object} Download URLs for all resources
  */
-export function getCDNResources(preset = 'ec', version = '4.11.0') {
-    const base = `https://cdn.jsdelivr.net/npm/@ecl/preset-${preset}@${version}`;
+export function getCDNResources(preset = 'ec', version = '4.11.1') {
+    const base = `https://cdn1.fpfis.tech.ec.europa.eu/ecl/v${version}/${preset}`;
 
     return {
         success: true,
@@ -250,16 +252,16 @@ export function getCDNResources(preset = 'ec', version = '4.11.0') {
             version,
             resources: {
                 styles: {
-                    main: `${base}/dist/styles/ecl-${preset}.css`,
-                    print: `${base}/dist/styles/ecl-${preset}-print.css`,
-                    reset: `${base}/dist/styles/optional/ecl-reset.css`
+                    main: `${base}/styles/ecl-${preset}.css`,
+                    print: `${base}/styles/ecl-${preset}-print.css`,
+                    reset: `${base}/styles/optional/ecl-reset.css`
                 },
                 scripts: {
-                    main: `${base}/dist/scripts/ecl-${preset}.js`
+                    main: `${base}/scripts/ecl-${preset}.js`
                 },
                 images: {
-                    icons_sprite: `${base}/dist/images/icons/sprites/icons.svg`,
-                    logo_sprite: `${base}/dist/images/logo/sprites/logo.svg`
+                    icons_sprite: `${base}/images/icons/sprites/icons.svg`,
+                    logo_sprite: `${base}/images/logo/sprites/logo.svg`
                 },
                 fonts: {
                     note: 'ECL uses system fonts (Arial, sans-serif) - no web fonts needed'
