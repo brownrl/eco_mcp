@@ -153,7 +153,7 @@ console.log('\n=== Testing Relationship Graph Building ===\n');
 
 // Test 16: Build relationship graph (default format)
 test('Build relationship graph (cytoscape)', () => {
-  const result = Relationships.buildRelationshipGraph(db, { 
+  const result = Relationships.buildRelationshipGraph(db, {
     components: ['button', 'card', 'accordion'],
     format: 'cytoscape'
   });
@@ -166,7 +166,7 @@ test('Build relationship graph (cytoscape)', () => {
 
 // Test 17: Build relationship graph (D3 format)
 test('Build relationship graph (D3 format)', () => {
-  const result = Relationships.buildRelationshipGraph(db, { 
+  const result = Relationships.buildRelationshipGraph(db, {
     components: ['button', 'card'],
     format: 'd3'
   });
@@ -179,7 +179,7 @@ test('Build relationship graph (D3 format)', () => {
 
 // Test 18: Build relationship graph (Mermaid format)
 test('Build relationship graph (Mermaid format)', () => {
-  const result = Relationships.buildRelationshipGraph(db, { 
+  const result = Relationships.buildRelationshipGraph(db, {
     components: ['button', 'card'],
     format: 'mermaid'
   });
@@ -191,7 +191,7 @@ test('Build relationship graph (Mermaid format)', () => {
 
 // Test 19: Build graph with relationship type filter
 test('Build graph with relationship type filter', () => {
-  const result = Relationships.buildRelationshipGraph(db, { 
+  const result = Relationships.buildRelationshipGraph(db, {
     components: ['button', 'card', 'accordion'],
     relationship_types: ['requires', 'suggests']
   });
@@ -201,7 +201,7 @@ test('Build graph with relationship type filter', () => {
 
 // Test 20: Error handling - no components found
 test('Error handling - no components for graph', () => {
-  const result = Relationships.buildRelationshipGraph(db, { 
+  const result = Relationships.buildRelationshipGraph(db, {
     components: ['nonexistent-xyz', 'nonexistent-abc']
   });
   assert(result.success === false, 'Should fail');
@@ -223,8 +223,8 @@ test('Analyze conflicts (button + card)', () => {
 
 // Test 22: Analyze conflicts without warnings
 test('Analyze conflicts without warnings', () => {
-  const result = Relationships.analyzeComponentConflicts(db, ['button', 'card'], { 
-    include_warnings: false 
+  const result = Relationships.analyzeComponentConflicts(db, ['button', 'card'], {
+    include_warnings: false
   });
   assert(result.success === true, 'Should succeed');
   assert(result.analysis.warnings === undefined, 'Should not include warnings');
@@ -232,8 +232,8 @@ test('Analyze conflicts without warnings', () => {
 
 // Test 23: Analyze conflicts without recommendations
 test('Analyze conflicts without recommendations', () => {
-  const result = Relationships.analyzeComponentConflicts(db, ['button', 'card'], { 
-    include_recommendations: false 
+  const result = Relationships.analyzeComponentConflicts(db, ['button', 'card'], {
+    include_recommendations: false
   });
   assert(result.success === true, 'Should succeed');
   assert(result.analysis.recommendations === undefined, 'Should not include recommendations');

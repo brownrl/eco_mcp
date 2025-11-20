@@ -71,9 +71,9 @@ export function analyzeComponentDependencies(db, componentName, options = {}) {
     const implicitDeps = extractImplicitDependencies(guidance);
 
     // Check if component requires JavaScript
-    const requiresJs = component.requires_js || 
-                       externalDeps.scripts.length > 0 ||
-                       examples.some(e => e.language === 'javascript');
+    const requiresJs = component.requires_js ||
+      externalDeps.scripts.length > 0 ||
+      examples.some(e => e.language === 'javascript');
 
     // Build dependency tree
     const dependencies = {
@@ -106,26 +106,26 @@ export function analyzeComponentDependencies(db, componentName, options = {}) {
       dependencyChain = resolveDependencyChain(db, implicitDeps.required);
     }
 
-// Generate installation notes (always include at least basic ECL setup)
-  const notes = generateInstallationNotes(dependencies, component);
+    // Generate installation notes (always include at least basic ECL setup)
+    const notes = generateInstallationNotes(dependencies, component);
 
-  return {
-    success: true,
-    component: {
-      name: component.component_name,
-      title: component.title,
-      complexity: component.complexity || 'moderate',
-      requires_javascript: requiresJs,
-      framework_specific: component.framework_specific || false
-    },
-    dependencies: dependencies,
-    accessibility_requirements: a11yReqs.map(r => ({
-      requirement: r.requirement_type,
-      wcag_criterion: r.wcag_criterion,
-      description: r.description
-    })),
-    dependency_chain: recursive ? dependencyChain : undefined,
-    installation_notes: notes,
+    return {
+      success: true,
+      component: {
+        name: component.component_name,
+        title: component.title,
+        complexity: component.complexity || 'moderate',
+        requires_javascript: requiresJs,
+        framework_specific: component.framework_specific || false
+      },
+      dependencies: dependencies,
+      accessibility_requirements: a11yReqs.map(r => ({
+        requirement: r.requirement_type,
+        wcag_criterion: r.wcag_criterion,
+        description: r.description
+      })),
+      dependency_chain: recursive ? dependencyChain : undefined,
+      installation_notes: notes,
       metadata: {
         execution_time_ms: Date.now() - startTime,
         total_dependencies: countDependencies(dependencies)

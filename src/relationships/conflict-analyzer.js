@@ -61,7 +61,7 @@ export function analyzeComponentConflicts(db, components, options = {}) {
     const foundNames = uniqueComponents.map(c => c.component_name.toLowerCase());
     const requestedNames = components.map(c => c.toLowerCase());
     const missing = requestedNames.filter(name => !foundNames.includes(name));
-    
+
     if (missing.length > 0) {
       return {
         success: false,
@@ -106,10 +106,10 @@ export function analyzeComponentConflicts(db, components, options = {}) {
           const comp2Name = comp2.component_name.toLowerCase();
 
           if (content.includes(comp2Name)) {
-            if (content.includes("don't use with") || 
-                content.includes("incompatible") ||
-                content.includes("conflicts with") ||
-                content.includes("avoid using with")) {
+            if (content.includes("don't use with") ||
+              content.includes("incompatible") ||
+              content.includes("conflicts with") ||
+              content.includes("avoid using with")) {
               conflicts.push({
                 severity: 'error',
                 component1: comp1.component_name,
@@ -118,10 +118,10 @@ export function analyzeComponentConflicts(db, components, options = {}) {
                 details: extractRelevantGuidance(content, comp2Name),
                 recommendation: `Remove one of these components or use an alternative`
               });
-            } else if (include_warnings && 
-                      (content.includes('caution') || 
-                       content.includes('careful') ||
-                       content.includes('warning'))) {
+            } else if (include_warnings &&
+              (content.includes('caution') ||
+                content.includes('careful') ||
+                content.includes('warning'))) {
               warnings.push({
                 severity: 'warning',
                 component1: comp1.component_name,
@@ -140,11 +140,11 @@ export function analyzeComponentConflicts(db, components, options = {}) {
           const comp1Name = comp1.component_name.toLowerCase();
 
           if (content.includes(comp1Name)) {
-            if (content.includes("don't use with") || 
-                content.includes("incompatible") ||
-                content.includes("conflicts with")) {
+            if (content.includes("don't use with") ||
+              content.includes("incompatible") ||
+              content.includes("conflicts with")) {
               // Check if already added
-              const exists = conflicts.some(c => 
+              const exists = conflicts.some(c =>
                 (c.component1 === comp1.component_name && c.component2 === comp2.component_name) ||
                 (c.component1 === comp2.component_name && c.component2 === comp1.component_name)
               );
@@ -196,7 +196,7 @@ export function analyzeComponentConflicts(db, components, options = {}) {
         const compGuidance = guidanceMap[comp.id] || [];
         compGuidance.forEach(g => {
           const content = g.content.toLowerCase();
-          
+
           if (content.includes('instead') || content.includes('alternative')) {
             const alternatives = extractAlternatives(content);
             if (alternatives.length > 0) {
@@ -278,10 +278,10 @@ export function analyzeComponentConflicts(db, components, options = {}) {
  */
 function extractRelevantGuidance(content, keyword) {
   const sentences = content.split(/[.!?]+/);
-  const relevantSentences = sentences.filter(s => 
+  const relevantSentences = sentences.filter(s =>
     s.toLowerCase().includes(keyword.toLowerCase())
   );
-  
+
   return relevantSentences
     .map(s => s.trim())
     .filter(s => s.length > 0)
@@ -293,7 +293,7 @@ function extractRelevantGuidance(content, keyword) {
  */
 function extractAlternatives(content) {
   const alternatives = [];
-  
+
   // Look for patterns like "use X instead" or "X is an alternative"
   const patterns = [
     /use\s+(?:the\s+)?([a-z-]+)\s+instead/gi,
@@ -320,13 +320,13 @@ function extractAlternatives(content) {
  */
 function calculateRiskScore(conflicts, warnings) {
   let score = 0;
-  
+
   // Each conflict adds significant risk
   score += conflicts.length * 30;
-  
+
   // Each warning adds moderate risk
   score += warnings.length * 10;
-  
+
   // Cap at 100
   return Math.min(score, 100);
 }
@@ -385,7 +385,7 @@ export function suggestAlternatives(db, componentName, options = {}) {
 
     // Find components with similar tags
     const featureTags = tags.filter(t => t.tag_type === 'feature').map(t => t.tag);
-    
+
     if (featureTags.length === 0) {
       return {
         success: true,
@@ -424,7 +424,7 @@ export function suggestAlternatives(db, componentName, options = {}) {
         FROM component_tags
         WHERE page_id = ? AND tag IN (${featureTags.map(() => '?').join(',')})
       `).all(alt.id, ...featureTags);
-      
+
       alt.shared_tags = altTags.map(t => t.tag);
       alt.similarity_score = ((alt.shared_features / featureTags.length) * 100).toFixed(1);
     });
