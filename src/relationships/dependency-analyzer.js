@@ -38,7 +38,7 @@ export function analyzeComponentDependencies(db, componentName, options = {}) {
         cm.framework_specific
       FROM pages p
       LEFT JOIN component_metadata cm ON p.id = cm.page_id
-      WHERE LOWER(p.component_name) = LOWER(?)
+      WHERE LOWER(p.title) = LOWER(?)
       LIMIT 1
     `).get(componentName);
 
@@ -256,9 +256,9 @@ function resolveDependencyChain(db, componentNames, visited = new Set()) {
 
     // Find component
     const component = db.prepare(`
-      SELECT p.id, p.component_name
+      SELECT p.id, p.title as component_name
       FROM pages p
-      WHERE LOWER(p.component_name) LIKE LOWER(?)
+      WHERE LOWER(p.title) LIKE LOWER(?)
       LIMIT 1
     `).get(`%${name}%`);
 

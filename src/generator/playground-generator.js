@@ -86,7 +86,7 @@ function getComponentExamples(db, component, includeAll) {
       FROM code_examples ce
       JOIN pages p ON ce.page_id = p.id
       LEFT JOIN enhanced_code_examples ece ON ce.id = ece.example_id
-      WHERE LOWER(p.component_name) = LOWER(?)
+      WHERE LOWER(p.title) = LOWER(?)
         AND ce.language = 'html'
       ORDER BY 
         CASE 

@@ -364,7 +364,7 @@ export function suggestAlternatives(db, componentName, options = {}) {
         cm.requires_js
       FROM pages p
       LEFT JOIN component_metadata cm ON p.id = cm.page_id
-      WHERE LOWER(p.component_name) = LOWER(?)
+      WHERE LOWER(p.title) = LOWER(?)
       LIMIT 1
     `).get(componentName);
 

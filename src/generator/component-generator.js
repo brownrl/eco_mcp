@@ -65,6 +65,7 @@ export function generateComponent(db, component, options = {}) {
 function getComponentTemplate(db, component) {
   try {
     // Get simplest example as template
+    // NOTE: p.component_name is actually the CATEGORY, p.title is the actual component name
     const query = `
       SELECT 
         ce.code,
@@ -73,7 +74,7 @@ function getComponentTemplate(db, component) {
       FROM code_examples ce
       JOIN pages p ON ce.page_id = p.id
       LEFT JOIN enhanced_code_examples ece ON ce.id = ece.example_id
-      WHERE LOWER(p.component_name) = LOWER(?)
+      WHERE LOWER(p.title) = LOWER(?)
         AND ce.language = 'html'
       ORDER BY 
         CASE 
@@ -351,7 +352,7 @@ function getAccessibilityNotes(db, component) {
       SELECT ar.requirement_text, ar.requirement_level
       FROM accessibility_requirements ar
       JOIN pages p ON ar.page_id = p.id
-      WHERE LOWER(p.component_name) = LOWER(?)
+      WHERE LOWER(p.title) = LOWER(?)
       ORDER BY 
         CASE ar.requirement_level
           WHEN 'must' THEN 1
