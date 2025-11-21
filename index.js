@@ -263,30 +263,43 @@ Paste component code into your template body. Components with \`data-ecl-auto-in
 ### 1. **about** (you're here!)
 Get overview of ECL, component catalog, and workflow guidance.
 
-### 2. **search** ⭐ PRIMARY TOOL
+### 2. **recipe_search** ⭐ NEW! PRE-BUILT PATTERNS
+Search curated recipes for common tasks (complete webpages, forms, layouts).
+- Example: \`recipe_search(query="complete webpage")\`
+- Example: \`recipe_search(query="form layout")\`
+- Returns: Recipe ID, title, difficulty, components used, description
+- **Use this first** for end-to-end implementation guides
+
+### 3. **recipe_get** ⭐ GET FULL RECIPE
+Retrieve complete step-by-step recipe with all code and instructions.
+- Requires recipe ID from recipe_search
+- Returns: Full markdown guide with examples, pitfalls, best practices
+- **Best for:** Following complete workflows from start to finish
+
+### 4. **search** ⭐ PRIMARY TOOL FOR COMPONENTS
 Search 159 pages by keyword. Returns matching pages with snippets.
 - Example: \`search(query="button primary")\`
 - Example: \`search(query="form validation")\`
 - Example: \`search(query="responsive grid")\`
 
-### 3. **get_examples** ⭐ MOST USEFUL FOR CODE
+### 5. **get_examples** ⭐ MOST USEFUL FOR CODE
 Extract clean, copy-paste ready HTML from any component page.
 - Requires URL from search results
 - Returns labeled code blocks
 - Much faster than get_page
 
-### 4. **get_starter_template** ⭐ START HERE FOR NEW PROJECTS
+### 6. **get_starter_template** ⭐ START HERE FOR NEW PROJECTS
 Generate complete HTML boilerplate with:
 - Official EC CDN links (v4.11.1)
 - Required CSS (reset, main, utilities, print)
 - ECL JavaScript with auto-initialization
 - Proper meta tags and structure
 
-### 5. **get_page**
+### 7. **get_page**
 Retrieve full HTML documentation page (verbose, rarely needed).
 Use \`get_examples\` instead for code.
 
-### 6. **index**
+### 8. **index**
 Get complete list of all 159 pages with URLs, categories, and hierarchy.
 Useful for building navigation or seeing everything at once.
 
