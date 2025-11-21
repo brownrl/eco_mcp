@@ -34,22 +34,6 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 }
 ```
 
-Or use npx to run directly from GitHub without installation:
-
-```json
-{
-  "mcpServers": {
-    "ecl": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "github:brownrl/eco_mcp"
-      ]
-    }
-  }
-}
-```
-
 ## Available Tools
 
 ### Core Tools
