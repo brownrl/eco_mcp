@@ -11,8 +11,10 @@ A Model Context Protocol (MCP) server that provides AI agents with access to the
 
 ## Installation
 
+Install directly from GitHub:
+
 ```bash
-npm install
+npm install -g github:brownrl/ecl_mcp
 ```
 
 ## Usage
@@ -21,12 +23,27 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 
 ```json
 {
-  "mcp": {
+  "mcpServers": {
+    "ecl": {
+      "command": "node",
+      "args": [
+        "/path/to/global/node_modules/ecl_mcp/index.js"
+      ]
+    }
+  }
+}
+```
+
+Or use npx to run directly from GitHub without installation:
+
+```json
+{
+  "mcpServers": {
     "ecl": {
       "command": "npx",
-      "type": "stdio",
       "args": [
-        "ecl-mcp"
+        "-y",
+        "github:brownrl/ecl_mcp"
       ]
     }
   }
