@@ -69,6 +69,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: 'string',
               description: 'The full URL of the page to retrieve (from search results)',
             },
+            content: {
+              type: 'boolean',
+              description: 'If true (default), returns cleaned page content. If false, returns raw HTML.',
+            },
           },
           required: ['url'],
         },
@@ -510,10 +514,12 @@ Example paths:
 
   if (name === 'get_page') {
     const url = args.url;
+    const useContent = args.content !== false; // Default to true
 
     try {
+      const field = useContent ? 'content' : 'html';
       const result = await dbAll(
-        'SELECT url, title, category, html FROM pages WHERE url = ? LIMIT 1',
+        `SELECT url, title, category, ${field} FROM pages WHERE url = ? LIMIT 1`,
         [url]
       );
 
@@ -529,10 +535,14 @@ Example paths:
       }
 
       const page = result[0];
+      const pageData = useContent ? page.content : page.html;
+      const dataType = useContent ? 'Page Content' : 'Raw HTML';
+      
       let output = `# ${page.title}\n\n`;
       output += `**URL:** ${page.url}\n`;
-      output += `**Category:** ${page.category}\n\n`;
-      output += `## HTML Content\n\n${page.html}`;
+      output += `**Category:** ${page.category}\n`;
+      output += `**Type:** ${dataType}\n\n`;
+      output += `## ${dataType}\n\n${pageData}`;
 
       return {
         content: [
