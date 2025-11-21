@@ -103,13 +103,16 @@ function extractCodeExamples(html) {
 
     // List of inline elements that shouldn't cause line breaks
     const inlineTags = ['span', 'a', 'strong', 'em', 'b', 'i', 'code', 'small', 'svg', 'use', 'path'];
+    
+    // List of inline container elements that should keep their content on one line
+    const inlineContainers = ['label', 'legend', 'button'];
 
-    // Add line breaks only after block-level closing tags
-    const blockPattern = new RegExp(`</((?!(?:${inlineTags.join('|')})[>\\s])[^>]+)>`, 'g');
+    // Add line breaks only after block-level closing tags (but NOT after inline containers)
+    const blockPattern = new RegExp(`</((?!(?:${inlineTags.join('|')}|${inlineContainers.join('|')})[>\\s])[^>]+)>`, 'g');
     code = code.replace(blockPattern, '</$1>\n');
 
-    // Add line breaks before block-level opening tags (but not if preceded by opening tag)
-    const blockOpenPattern = new RegExp(`([^>])\\s*<((?!(?:${inlineTags.join('|')}|/)[>\\s])[a-z][^>]*)>`, 'gi');
+    // Add line breaks before block-level opening tags (but not if preceded by opening tag or inside inline containers)
+    const blockOpenPattern = new RegExp(`([^>])\\s*<((?!(?:${inlineTags.join('|')}|${inlineContainers.join('|')}|/)[>\\s])[a-z][^>]*)>`, 'gi');
     code = code.replace(blockOpenPattern, '$1\n<$2>');
 
     // Clean up multiple newlines
@@ -177,25 +180,38 @@ function extractHierarchy(url) {
 async function crawl() {
   let crawled = 0;
   let updated = 0;
+  let rebuilt = 0;
 
   // Clear existing examples (they will be re-added)
-  const deleteExamples = await dbRun('DELETE FROM examples');
+  console.log('🗑️  Clearing existing examples...');
+  await dbRun('DELETE FROM examples');
 
   for (const page of pagesToCrawl) {
     try {
       const [h1, h2, h3, h4] = extractHierarchy(page.url);
 
       // Check if already exists
-      const existing = await dbGet('SELECT id FROM pages WHERE url = ?', [page.url]);
+      const existing = await dbGet('SELECT id, html, title FROM pages WHERE url = ?', [page.url]);
 
       if (existing) {
-        // Update metadata only (no fetching)
-        console.log(`🔄 Updating metadata: ${page.url}`);
+        // Update metadata and rebuild examples from stored HTML
+        console.log(`🔄 Rebuilding examples: ${existing.title}`);
         await dbRun(
           'UPDATE pages SET category = ?, hierarchy_1 = ?, hierarchy_2 = ?, hierarchy_3 = ?, hierarchy_4 = ? WHERE id = ?',
           [page.category, h1, h2, h3, h4, existing.id]
         );
-        updated++;
+        
+        // Extract and save code examples from stored HTML
+        const examples = extractCodeExamples(existing.html);
+        for (const example of examples) {
+          await dbRun(
+            'INSERT INTO examples (page_id, code, label, position) VALUES (?, ?, ?, ?)',
+            [existing.id, example.code, example.label, example.position]
+          );
+        }
+        
+        rebuilt++;
+        console.log(`  ✅ Rebuilt ${examples.length} examples`);
         continue;
       }
 
@@ -237,7 +253,7 @@ async function crawl() {
     }
   }
 
-  console.log(`\n✨ Done! Crawled: ${crawled}, Updated: ${updated}`);
+  console.log(`\n✨ Done! Crawled: ${crawled}, Rebuilt: ${rebuilt}, Updated: ${updated}`);
   db.close();
 }
 
