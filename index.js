@@ -142,6 +142,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['id'],
         },
       },
+      {
+        name: 'search_examples',
+        description: 'Search all code examples using natural language queries. Returns matching examples with their code, labels, and source page URLs. Useful for finding specific HTML patterns, component implementations, or usage examples.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'Search query to find relevant code examples (e.g., "button primary", "checkbox required", "form validation")',
+            },
+            limit: {
+              type: 'number',
+              description: 'Maximum number of results to return (default: 10)',
+            },
+          },
+          required: ['query'],
+        },
+      },
     ],
   };
 });
@@ -276,30 +294,38 @@ Retrieve complete step-by-step recipe with all code and instructions.
 - Returns: Full markdown guide with examples, pitfalls, best practices
 - **Best for:** Following complete workflows from start to finish
 
-### 4. **search** ⭐ PRIMARY TOOL FOR COMPONENTS
+### 4. **search_examples** ⭐ SEARCH CODE DIRECTLY
+Natural language search across all 270+ code examples.
+- Example: \`search_examples(query="button primary")\`
+- Example: \`search_examples(query="checkbox required")\`
+- Example: \`search_examples(query="form validation")\`
+- Returns: Matching code snippets with source page info
+- **Best for:** Finding specific HTML patterns quickly
+
+### 5. **search** ⭐ PRIMARY TOOL FOR COMPONENTS
 Search 159 pages by keyword. Returns matching pages with snippets.
 - Example: \`search(query="button primary")\`
 - Example: \`search(query="form validation")\`
 - Example: \`search(query="responsive grid")\`
 
-### 5. **get_examples** ⭐ MOST USEFUL FOR CODE
+### 6. **get_examples** ⭐ MOST USEFUL FOR CODE
 Extract clean, copy-paste ready HTML from any component page.
 - Requires URL from search results
 - Returns labeled code blocks
 - Much faster than get_page
 
-### 6. **get_starter_template** ⭐ START HERE FOR NEW PROJECTS
+### 7. **get_starter_template** ⭐ START HERE FOR NEW PROJECTS
 Generate complete HTML boilerplate with:
 - Official EC CDN links (v4.11.1)
 - Required CSS (reset, main, utilities, print)
 - ECL JavaScript with auto-initialization
 - Proper meta tags and structure
 
-### 7. **get_page**
+### 8. **get_page**
 Retrieve full HTML documentation page (verbose, rarely needed).
 Use \`get_examples\` instead for code.
 
-### 8. **index**
+### 9. **index**
 Get complete list of all 159 pages with URLs, categories, and hierarchy.
 Useful for building navigation or seeing everything at once.
 
@@ -903,6 +929,73 @@ Icons and logos from same CDN:
           {
             type: 'text',
             text: `Error retrieving recipe: ${error.message}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+
+  if (name === 'search_examples') {
+    const query = args.query.toLowerCase();
+    const limit = args.limit || 10;
+
+    try {
+      let results = await dbAll(
+        `SELECT 
+          e.id,
+          e.label,
+          e.code,
+          p.url,
+          p.title as page_title,
+          p.category,
+          snippet(examples_fts, 1, '<mark>', '</mark>', '...', 80) as snippet
+         FROM examples_fts
+         JOIN examples e ON examples_fts.rowid = e.id
+         JOIN pages p ON e.page_id = p.id
+         WHERE examples_fts MATCH ?
+         ORDER BY rank
+         LIMIT ?`,
+        [query, limit]
+      );
+
+      if (results.length === 0) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `No examples found for: "${query}"\n\nTry broader terms or check component names with 'search' tool.`,
+            },
+          ],
+        };
+      }
+
+      let output = `# Example Search Results for "${query}"\n\nFound ${results.length} example(s):\n\n`;
+      
+      results.forEach((result, index) => {
+        output += `## ${index + 1}. ${result.label || 'Untitled Example'}\n`;
+        output += `**From:** ${result.page_title} (${result.category})\n`;
+        output += `**URL:** ${result.url}\n`;
+        output += `**Match:** ${result.snippet}\n\n`;
+        output += `\`\`\`html\n${result.code}\n\`\`\`\n\n`;
+      });
+
+      output += `\n---\n💡 **Tip:** Use 'get_examples' with the page URL to see all examples from that page.\n`;
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: output,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Error searching examples: ${error.message}`,
           },
         ],
         isError: true,
