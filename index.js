@@ -110,6 +110,38 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: [],
         },
       },
+      {
+        name: 'recipe_search',
+        description: 'Search ECL recipes - pre-built component combinations and patterns. Returns step-by-step guides for common tasks like "complete webpage", "login form", "dashboard layout". More comprehensive than individual component docs.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'Search query to find relevant recipes (e.g., "full page", "form", "layout")',
+            },
+            limit: {
+              type: 'number',
+              description: 'Maximum number of results to return (default: 5)',
+            },
+          },
+          required: ['query'],
+        },
+      },
+      {
+        name: 'recipe_get',
+        description: 'Get the complete recipe by ID. Returns full markdown content with step-by-step instructions, code examples, and best practices. Use this after recipe_search to get implementation details.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'number',
+              description: 'Recipe ID from recipe_search results',
+            },
+          },
+          required: ['id'],
+        },
+      },
     ],
   };
 });
@@ -727,6 +759,137 @@ Icons and logos from same CDN:
           {
             type: 'text',
             text: `Error searching: ${error.message}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+
+  if (name === 'recipe_search') {
+    const query = args.query.toLowerCase();
+    const limit = args.limit || 5;
+
+    try {
+      let results = await dbAll(
+        `SELECT 
+          r.id,
+          r.title,
+          r.description,
+          r.difficulty,
+          r.components_used,
+          r.created_at,
+          snippet(recipes_fts, 0, '<mark>', '</mark>', '...', 50) as snippet
+         FROM recipes_fts
+         JOIN recipes r ON recipes_fts.rowid = r.id
+         WHERE recipes_fts MATCH ?
+         ORDER BY rank
+         LIMIT ?`,
+        [query, limit]
+      );
+
+      if (results.length === 0) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `No recipes found for: "${query}"\n\nTry broader terms like "webpage", "form", "layout", or "page".`,
+            },
+          ],
+        };
+      }
+
+      let output = `# Recipe Search Results for "${query}"\n\nFound ${results.length} recipe(s):\n\n`;
+      
+      results.forEach((result, index) => {
+        output += `## ${index + 1}. ${result.title}\n`;
+        output += `**Difficulty:** ${result.difficulty || 'Not specified'}\n`;
+        output += `**Description:** ${result.description}\n`;
+        output += `**Components Used:** ${result.components_used}\n`;
+        output += `**Recipe ID:** ${result.id}\n`;
+        output += `**Match:** ${result.snippet}\n\n`;
+      });
+
+      output += `\n---\n💡 **Tip:** Use 'recipe_get' with the Recipe ID to retrieve the full recipe with step-by-step instructions.\n`;
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: output,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Error searching recipes: ${error.message}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+  }
+
+  if (name === 'recipe_get') {
+    const id = args.id;
+
+    try {
+      const result = await dbAll(
+        `SELECT 
+          id,
+          title,
+          description,
+          markdown,
+          html,
+          keywords,
+          difficulty,
+          components_used,
+          created_at
+         FROM recipes
+         WHERE id = ?
+         LIMIT 1`,
+        [id]
+      );
+
+      if (result.length === 0) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `Recipe not found: ID ${id}\n\nUse 'recipe_search' to find available recipes.`,
+            },
+          ],
+        };
+      }
+
+      const recipe = result[0];
+      let output = `# ${recipe.title}\n\n`;
+      output += `**Recipe ID:** ${recipe.id}\n`;
+      output += `**Difficulty:** ${recipe.difficulty || 'Not specified'}\n`;
+      output += `**Components Used:** ${recipe.components_used}\n`;
+      output += `**Keywords:** ${recipe.keywords}\n`;
+      output += `**Created:** ${recipe.created_at}\n\n`;
+      output += `## Description\n${recipe.description}\n\n`;
+      output += `---\n\n`;
+      output += recipe.markdown;
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: output,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Error retrieving recipe: ${error.message}`,
           },
         ],
         isError: true,
