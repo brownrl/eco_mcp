@@ -34,7 +34,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'start_here',
-        description: 'Get information about this MCP server and what it provides. **START HERE**.',
+        description: '🚨 CALL THIS FIRST! 🚨 Essential setup guide with asset download script and quick start instructions. Returns complete workflow for building ECL pages. ALL other tools assume you have to read this first',
         inputSchema: {
           type: 'object',
           properties: {},
@@ -431,7 +431,7 @@ Copy HTML into template's \`<main>\` section. Components auto-initialize.
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>ECL Sample Page</title>
+  <title>Basic Web Page</title>
   <script>
     document.documentElement.classList.remove('no-js');
     document.documentElement.classList.add('has-js');
@@ -551,7 +551,7 @@ Copy HTML into template's \`<main>\` section. Components auto-initialize.
     </div>
     <div class="ecl-site-header__banner">
       <div class="ecl-container">
-        <div class="ecl-site-header__site-name">European Commission Survey Platform</div>
+        <div class="ecl-site-header__site-name">European Commission ECL Page</div>
       </div>
     </div>
     <nav class="ecl-menu" data-ecl-menu data-ecl-auto-init="Menu" aria-expanded="false" role="navigation"
@@ -592,19 +592,42 @@ Copy HTML into template's \`<main>\` section. Components auto-initialize.
               </span>
             </button>
           </header>
+          <button class="ecl-button ecl-button--ghost ecl-menu__item ecl-menu__items-previous ecl-button--icon-only"
+            type="button" data-ecl-menu-items-previous tabindex="-1">
+            <span class="ecl-button__container">
+              <svg class="ecl-icon ecl-icon--s ecl-icon--rotate-270 ecl-button__icon" focusable="false"
+                aria-hidden="true" data-ecl-icon>
+                <use xlink:href="assets/icons/icons.svg#corner-arrow"></use>
+              </svg>
+              <span class="ecl-button__label" data-ecl-label="true">Previous items</span>
+            </span>
+          </button>
+          <button class="ecl-button ecl-button--ghost ecl-menu__item ecl-menu__items-next ecl-button--icon-only"
+            type="button" data-ecl-menu-items-next tabindex="-1">
+            <span class="ecl-button__container">
+              <svg class="ecl-icon ecl-icon--s ecl-icon--rotate-90 ecl-button__icon" focusable="false"
+                aria-hidden="true" data-ecl-icon>
+                <use xlink:href="assets/icons/icons.svg#corner-arrow"></use>
+              </svg>
+              <span class="ecl-button__label" data-ecl-label="true">Next items</span>
+            </span>
+          </button>
           <ul class="ecl-menu__list" data-ecl-menu-list>
-            <li class="ecl-menu__item ecl-menu__item--current" data-ecl-menu-item>
+            <li class="ecl-menu__item ecl-menu__item--current" data-ecl-menu-item id="ecl-menu-item-0">
               <a href="/" class="ecl-link ecl-link--standalone ecl-menu__link ecl-menu__link--current"
-                data-ecl-menu-link aria-current="page">Home</a>
+                data-ecl-menu-link id="ecl-menu-item-0-link" aria-current="page">Home</a>
             </li>
-            <li class="ecl-menu__item" data-ecl-menu-item>
-              <a href="/about" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link>About</a>
+            <li class="ecl-menu__item" data-ecl-menu-item id="ecl-menu-item-1">
+              <a href="/about" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link
+                id="ecl-menu-item-1-link">About</a>
             </li>
             <li class="ecl-menu__item ecl-menu__item--has-children" data-ecl-menu-item data-ecl-has-children
-              aria-haspopup aria-expanded="false">
-              <a href="/surveys" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link>Surveys</a>
+              aria-haspopup aria-expanded="false" id="ecl-menu-item-2">
+              <a href="/surveys" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link
+                id="ecl-menu-item-2-link">Surveys</a>
               <button class="ecl-button ecl-button--ghost ecl-menu__button-caret ecl-button--icon-only" type="button"
-                data-ecl-menu-caret aria-label="Access item's children" aria-expanded="false">
+                data-ecl-menu-caret aria-label="Access item's children" aria-describedby="ecl-menu-item-2-link"
+                aria-expanded="false">
                 <span class="ecl-button__container">
                   <svg class="ecl-icon ecl-icon--xs ecl-icon--rotate-180 ecl-button__icon" focusable="false"
                     aria-hidden="true" data-ecl-icon>
@@ -627,11 +650,13 @@ Copy HTML into template's \`<main>\` section. Components auto-initialize.
                 </ul>
               </div>
             </li>
-            <li class="ecl-menu__item" data-ecl-menu-item>
-              <a href="/resources" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link>Resources</a>
+            <li class="ecl-menu__item" data-ecl-menu-item id="ecl-menu-item-3">
+              <a href="/resources" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link
+                id="ecl-menu-item-3-link">Resources</a>
             </li>
-            <li class="ecl-menu__item" data-ecl-menu-item>
-              <a href="/contact" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link>Contact</a>
+            <li class="ecl-menu__item" data-ecl-menu-item id="ecl-menu-item-4">
+              <a href="/contact" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link
+                id="ecl-menu-item-4-link">Contact</a>
             </li>
           </ul>
         </section>
@@ -741,7 +766,8 @@ Copy HTML into template's \`<main>\` section. Components auto-initialize.
   </script>
 </body>
 
-</html>`;
+</html>
+`;
 
     return {
       content: [
