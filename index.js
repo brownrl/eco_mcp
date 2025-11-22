@@ -33,8 +33,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {
-        name: 'about',
-        description: 'Get information about this MCP server and what it provides. **START HERE** - Returns comprehensive overview of all 159 ECL documentation pages, complete component catalog (70+ UI components, 24 form components, 21 navigation components), and AI agent workflow guide. Essential first call to understand what\'s available before searching.',
+        name: 'start_here',
+        description: 'Get information about this MCP server and what it provides. **START HERE**.',
         inputSchema: {
           type: 'object',
           properties: {},
@@ -60,7 +60,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: 'get_page',
+        name: 'get_documentationpage',
         description: 'Get the complete HTML content of a specific documentation page by URL. Use this after searching to retrieve full code examples and detailed documentation.',
         inputSchema: {
           type: 'object',
@@ -93,7 +93,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'get_starter_template',
-        description: 'Get a basic HTML starter template with proper ECL CDN setup, ready to use. Use this as the foundation before adding ECL components. Returns a complete HTML page with correct script tags, CSS links, and CDN URLs.',
+        description: 'Get a basic HTML starter template with proper ECL local assets setup, ready to use. Use this as the foundation before adding ECL components. Returns a complete HTML page with correct script tags, CSS links, and local asset URLs.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -194,325 +194,107 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
-  if (name === 'about') {
+  if (name === 'start_here') {
     return {
       content: [
         {
           type: 'text',
           text: `# EC Europa Component Library MCP Server
 
-This MCP server provides comprehensive access to the European Commission's official Component Library (ECL) documentation.
+Access the European Commission's official Component Library (ECL) documentation.
 
-## 📊 What's Available
+## ⚡ Quick Start
 
-**Database Stats:**
-- **159 total pages** of documentation
-- **85 pages with code examples** (270 total examples)
-- **70 UI Components** with usage guidelines and code
-- **24 Form Components** for user input
-- **21 Navigation Components** for site structure
-- **19 Utility Classes** for styling
-- **8 Media Components** for rich content
-- **7 Site-Wide Components** (headers, footers, page structure)
-- **7 Design Guidelines** (typography, colors, spacing, etc.)
+### Step 1: Download Assets (Required First!)
 
----
+Create this script as \`download-ecl-assets.sh\`:
 
-## 🎯 For AI Coding Agents: Quick Navigation Guide
+\`\`\`bash
+#!/bin/bash
 
-### Essential Components (Start Here)
-**Site Structure:**
-- Site Header (core/standardised/harmonised variants)
-- Site Footer
-- Page Header
-- Breadcrumb
+# ECL Assets Download Script
+# Downloads all necessary ECL assets for local development
 
-**Most Common UI:**
-- Button (primary/secondary/tertiary/ghost/call-to-action)
-- Card (for content blocks)
-- Accordion (collapsible sections)
-- Banner (alerts, messages)
-- Modal (dialogs)
-- Table (data display)
+set -e
 
-**Form Components:**
-- Text Field, Text Area
-- Select, Checkbox, Radio
-- Datepicker, File Upload
-- Search Form
-- Rating Field, Range
+ECL_VERSION="4.11.1"
+BASE_URL="https://cdn1.fpfis.tech.ec.europa.eu/ecl/v\${ECL_VERSION}/ec"
 
-**Navigation:**
-- Menu, Mega Menu
-- Tabs
-- Pagination
-- Navigation List
-- Inpage Navigation
+echo "Downloading ECL v\${ECL_VERSION} assets..."
 
-**Content Display:**
-- List, List Illustration
-- Blockquote
-- File (document links)
-- Timeline
-- Fact Figures
-- News Ticker
+# Create directory structure
+mkdir -p assets/css
+mkdir -p assets/js
+mkdir -p assets/icons
+mkdir -p assets/images/logo/positive
+mkdir -p assets/images/logo/negative
 
-**Interactive:**
-- Expandable
-- Popover
-- Loading Indicator
-- Category Filter
-- Carousel
+# Download CSS files
+echo "Downloading CSS files..."
+curl -o assets/css/ecl-reset.css "\${BASE_URL}/styles/optional/ecl-reset.css"
+curl -o assets/css/ecl-ec.css "\${BASE_URL}/styles/ecl-ec.css"
+curl -o assets/css/ecl-ec-utilities.css "\${BASE_URL}/styles/optional/ecl-ec-utilities.css"
+curl -o assets/css/ecl-ec-print.css "\${BASE_URL}/styles/optional/ecl-ec-print.css"
 
-**Media:**
-- Gallery, Featured Item
-- Media Container
+# Download JavaScript
+echo "Downloading JavaScript files..."
+curl -o assets/js/ecl-ec.js "\${BASE_URL}/scripts/ecl-ec.js"
 
-**Utilities:**
-- Spacing (margin/padding)
-- Typography (text sizing/styling)
-- Background, Border, Shadow
-- Display, Float, Dimension
-- Screen Reader, Print utilities
+# Download icon sprite
+echo "Downloading icon sprites..."
+curl -o assets/icons/icons.svg "\${BASE_URL}/images/icons/sprites/icons.svg"
+curl -o assets/icons/icons-social-media.svg "\${BASE_URL}/images/icons/sprites/icons-social-media.svg"
 
----
+# Download logos
+echo "Downloading logos..."
+curl -o assets/icons/logo-ec.svg "\${BASE_URL}/images/logo/positive/logo-ec--en.svg"
+curl -o assets/icons/logo-ec-negative.svg "\${BASE_URL}/images/logo/negative/logo-ec--en.svg"
 
-## 🚀 Quick Start Workflow for AI Agents
+# Download additional common logos
+curl -o assets/images/logo/positive/logo-ec--mute.svg "\${BASE_URL}/images/logo/positive/logo-ec--mute.svg"
+curl -o assets/images/logo/negative/logo-ec--mute.svg "\${BASE_URL}/images/logo/negative/logo-ec--mute.svg"
 
-### Step 1: Get Your HTML Foundation
-\`\`\`
-Call: get_starter_template(title="My Page")
-Returns: Complete HTML with ECL CDN links and ECL.autoInit()
+echo "Download complete!"
+echo "Assets downloaded to assets/ directory"
 \`\`\`
 
-### Step 2: Find Components You Need
-\`\`\`
-Call: search(query="site header")
-Returns: Relevant pages with URLs
-\`\`\`
-
-### Step 3: Get Component Code
-\`\`\`
-Call: get_examples(url="<url-from-search>")
-Returns: Ready-to-use HTML code blocks
+Then run:
+\`\`\`bash
+chmod +x download-ecl-assets.sh
+./download-ecl-assets.sh
 \`\`\`
 
-### Step 4: Insert and Done
-Paste component code into your template body. Components with \`data-ecl-auto-init\` will initialize automatically.
-
----
-
-## 🛠️ Available Tools
-
-### 1. **about** (you're here!)
-Get overview of ECL, component catalog, and workflow guidance.
-
-### 2. **recipe_search** ⭐ NEW! PRE-BUILT PATTERNS
-Search curated recipes for common tasks (complete webpages, forms, layouts).
-- Example: \`recipe_search(query="complete webpage")\`
-- Example: \`recipe_search(query="form layout")\`
-- Returns: Recipe ID, title, difficulty, components used, description
-- **Use this first** for end-to-end implementation guides
-
-### 3. **recipe_get** ⭐ GET FULL RECIPE
-Retrieve complete step-by-step recipe with all code and instructions.
-- Requires recipe ID from recipe_search
-- Returns: Full markdown guide with examples, pitfalls, best practices
-- **Best for:** Following complete workflows from start to finish
-
-### 4. **search_examples** ⭐ SEARCH CODE DIRECTLY
-Natural language search across all 270+ code examples.
-- Example: \`search_examples(query="button primary")\`
-- Example: \`search_examples(query="checkbox required")\`
-- Example: \`search_examples(query="form validation")\`
-- Returns: Matching code snippets with source page info
-- **Best for:** Finding specific HTML patterns quickly
-
-### 5. **get_example** ⭐ GET SPECIFIC EXAMPLE
-Get a single example by URL and label or index.
-- Example: \`get_example(url="...", label="Primary button")\`
-- Example: \`get_example(url="...", index=0)\`
-- Returns: Single targeted code example
-- **Best for:** Retrieving exact example after search_examples
-
-### 6. **search** ⭐ PRIMARY TOOL FOR COMPONENTS
-Search 159 pages by keyword. Returns matching pages with snippets.
-- Example: \`search(query="button primary")\`
-- Example: \`search(query="form validation")\`
-- Example: \`search(query="responsive grid")\`
-
-### 7. **get_examples** ⭐ MOST USEFUL FOR CODE
-Extract clean, copy-paste ready HTML from any component page.
-- Requires URL from search results
-- Returns labeled code blocks
-- Much faster than get_page
-
-### 8. **get_starter_template** ⭐ START HERE FOR NEW PROJECTS
-Generate complete HTML boilerplate with:
-- Official EC CDN links (v4.11.1)
-- Required CSS (reset, main, utilities, print)
-- ECL JavaScript with auto-initialization
-- Proper meta tags and structure
-
-### 9. **get_page**
-Retrieve full HTML documentation page (verbose, rarely needed).
-Use \`get_examples\` instead for code.
-
-### 10. **index**
-Get complete list of all 159 pages with URLs, categories, and hierarchy.
-Useful for building navigation or seeing everything at once.
-
----
-
-## ⚠️ CRITICAL: Always Use Official EC CDN
-
-**Base URL:** \`https://cdn1.fpfis.tech.ec.europa.eu/ecl/v4.11.1/ec/\`
-
-**Required CSS (load in <head>):**
-1. \`styles/optional/ecl-reset.css\` - CSS reset (load first)
-2. \`styles/ecl-ec.css\` - Main component styles
-3. \`styles/optional/ecl-ec-utilities.css\` - Utility classes
-4. \`styles/ecl-ec-print.css\` - Print styles (media="print")
-
-**Required JS (load before </body>):**
-1. \`scripts/ecl-ec.js\` - ECL component library
-2. Call \`ECL.autoInit();\` after loading
-
-**Assets:**
-- Icons: \`images/icons/sprites/icons.svg\`
-- Logos: \`images/logo/positive/logo-ec--en.svg\` (or negative variant)
-
-**Never use:** jsdelivr, cdnjs, unpkg, or other third-party CDNs. Only use official EC CDN.
-
----
-
-## 🎨 Component JavaScript Requirements
-
-Components with \`data-ecl-auto-init\` attributes are automatically initialized by \`ECL.autoInit()\`:
-- ✅ Interactive components (Accordion, Tabs, Menu, Modal, Datepicker, etc.)
-- ✅ No manual initialization needed
-- ✅ Works out of the box with starter template
-
-Static components (Button, Card, Banner, etc.) require no JavaScript.
-
----
-
-## 📝 Common Search Queries to Get Started
-
-**Page Layouts:**
-- \`search(query="site header")\` → Full page headers
-- \`search(query="site footer")\` → Full page footers
-- \`search(query="page header")\` → Content page headers
-
-**Forms:**
-- \`search(query="text field")\` → Input fields
-- \`search(query="form checkbox radio")\` → Form controls
-- \`search(query="datepicker")\` → Date selection
-
-**UI Patterns:**
-- \`search(query="button primary")\` → Button variants
-- \`search(query="card")\` → Content cards
-- \`search(query="modal dialog")\` → Popup dialogs
-- \`search(query="accordion expandable")\` → Collapsible sections
-
-**Navigation:**
-- \`search(query="menu navigation")\` → Site menus
-- \`search(query="breadcrumb")\` → Breadcrumb trails
-- \`search(query="tabs")\` → Tabbed interfaces
-
-**Styling:**
-- \`search(query="spacing margin padding")\` → Layout utilities
-- \`search(query="typography")\` → Text styling
-- \`search(query="grid layout")\` → Page layouts
-
-**Guidelines:**
-- \`search(query="colors")\` → Color palette
-- \`search(query="getting started")\` → Setup guides
-
----
-
-## 💡 Pro Tips for AI Agents
-
-1. **Always start with** \`get_starter_template\` for new projects
-2. **Use search first**, then \`get_examples\` with the URLs returned
-3. **Avoid get_page** unless you need full documentation context
-4. **Check for variants** - most components have multiple styles (primary/secondary, etc.)
-5. **Look for "api" pages** - components with JavaScript have API documentation
-6. **Combine utilities** - use spacing/typography utilities with components
-7. **Full page pattern** = site-header + breadcrumb + page-header + content + site-footer
-
----
-
-## 📦 Typical Full Page Structure
-
-\`\`\`html
-<!DOCTYPE html>
-<html lang="en" class="no-js">
-<head>
-  <!-- Meta tags, title -->
-  <!-- ECL CSS (reset, main, utilities, print) -->
-</head>
-<body>
-  <!-- Site Header (search: "site header") -->
-  
-  <!-- Breadcrumb (search: "breadcrumb") -->
-  
-  <!-- Page Header (search: "page header") -->
-  
-  <main>
-    <!-- Your content components here -->
-    <!-- Cards, Tables, Forms, etc. -->
-  </main>
-  
-  <!-- Site Footer (search: "site footer") -->
-  
-  <!-- ECL JS + ECL.autoInit() -->
-</body>
-</html>
+### Step 2: Get Complete HTML Template
 \`\`\`
+get_starter_template(title="My Page")
+\`\`\`
+Returns full HTML page with header, footer, navigation, and ECL initialized.
+
+### Step 3: Find & Add Components
+\`\`\`
+search_examples(query="card")
+\`\`\`
+Copy HTML into template's \`<main>\` section. Components auto-initialize.
 
 ---
 
-## 🔍 When to Use Each Tool
+## 🛠️ Tools
 
-| Task | Tool | Example |
-|------|------|---------|
-| Starting new project | \`get_starter_template\` | Get HTML boilerplate |
-| Finding components | \`search\` | "button primary" |
-| Finding code examples | \`search_examples\` | "primary button" |
-| Getting one example | \`get_example\` | url + label or index |
-| Getting all examples | \`get_examples\` | Use URL from search |
-| Seeing all available docs | \`index\` | Browse full catalog |
-| Deep documentation dive | \`get_page\` | Full page context |
-| Checking what's available | \`about\` | You're here! |
+**Start here:** \`get_starter_template\` - Complete HTML boilerplate
 
-**Recommended flow:** \`about\` → \`get_starter_template\` → \`search_examples\` → \`get_example\` → implement
+**Find components:** \`search_examples\`, \`get_example\`, \`search\`, \`get_examples\`
+
+**Advanced:** \`recipe_search\`, \`recipe_get\`, \`get_documentation_page\`, \`index\`
 
 ---
 
-## 📚 Documentation Types
-
-Each component typically has:
-- **usage** - Guidelines, best practices, when to use
-- **code** - HTML examples with variants
-- **api** - JavaScript API (for interactive components)
-
-Example paths:
-- \`components > button > usage\`
-- \`components > button > code\`
-- \`navigation > tabs > api\`
-
----
-
-**Version:** ECL v4.11.1  
-**Last Updated:** Database contains 159 pages, 270 code examples  
-**Official Docs:** https://ec.europa.eu/component-library/`,
+**ECL v4.11.1** | 159 pages, 270 examples | https://ec.europa.eu/component-library/`,
         },
       ],
     };
   }
 
-  if (name === 'get_page') {
+  if (name === 'get_documentation_page') {
     const url = args.url;
     const useContent = args.content !== false; // Default to true
 
@@ -657,6 +439,7 @@ Example paths:
   <link rel="stylesheet" href="assets/css/ecl-reset.css" />
   <link rel="stylesheet" href="assets/css/ecl-ec.css" />
   <link rel="stylesheet" href="assets/css/ecl-ec-utilities.css" />
+  <link rel="stylesheet" href="assets/css/ecl-ec-print.css" media="print" />
 </head>
 
 <body>
