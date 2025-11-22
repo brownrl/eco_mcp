@@ -24,5 +24,9 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "better-sqlite3": "^12.4.6",
+    "prettier": "^3.6.2"
   }
 }
