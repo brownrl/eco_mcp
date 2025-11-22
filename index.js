@@ -1093,7 +1093,7 @@ Icons and logos from same CDN:
          JOIN examples e ON examples_fts.rowid = e.id
          JOIN pages p ON e.page_id = p.id
          WHERE examples_fts MATCH ?
-         ORDER BY rank
+         ORDER BY examples_fts.rank
          LIMIT ?`,
         [query, limit]
       );
