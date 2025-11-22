@@ -537,7 +537,7 @@ Example paths:
       const page = result[0];
       const pageData = useContent ? page.content : page.html;
       const dataType = useContent ? 'Page Content' : 'Raw HTML';
-      
+
       let output = `# ${page.title}\n\n`;
       output += `**URL:** ${page.url}\n`;
       output += `**Category:** ${page.category}\n`;
@@ -642,33 +642,322 @@ Example paths:
 
   if (name === 'get_starter_template') {
     const title = args.title || 'ECL Page';
-    
+
     const template = `<!DOCTYPE html>
 <html lang="en" class="no-js">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>${title}</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ECL Sample Page</title>
   <script>
-    var cl = document.querySelector('html').classList;
-    cl.remove('no-js');
-    cl.add('has-js');
+    document.documentElement.classList.remove('no-js');
+    document.documentElement.classList.add('has-js');
   </script>
-  <link rel="stylesheet" href="https://cdn1.fpfis.tech.ec.europa.eu/ecl/v4.11.1/ec/styles/optional/ecl-reset.css" media="screen">
-  <link rel="stylesheet" href="https://cdn1.fpfis.tech.ec.europa.eu/ecl/v4.11.1/ec/styles/ecl-ec.css" media="screen">
-  <link rel="stylesheet" href="https://cdn1.fpfis.tech.ec.europa.eu/ecl/v4.11.1/ec/styles/optional/ecl-ec-utilities.css" media="screen">
-  <link rel="stylesheet" href="https://cdn1.fpfis.tech.ec.europa.eu/ecl/v4.11.1/ec/styles/ecl-ec-print.css" media="print">
+  <link rel="stylesheet" href="assets/css/ecl-reset.css" />
+  <link rel="stylesheet" href="assets/css/ecl-ec.css" />
+  <link rel="stylesheet" href="assets/css/ecl-ec-utilities.css" />
 </head>
+
 <body>
-  <!-- Add ECL components here -->
-  <!-- Use search tool to find components, then get_examples to get their HTML -->
-  
-  <script src="https://cdn1.fpfis.tech.ec.europa.eu/ecl/v4.11.1/ec/scripts/ecl-ec.js"></script>
+  <header class="ecl-site-header ecl-site-header--has-menu" data-ecl-auto-init="SiteHeader">
+    <div class="ecl-site-header__inner">
+      <div class="ecl-site-header__background">
+        <div class="ecl-site-header__header">
+          <div class="ecl-site-header__container ecl-container">
+            <div class="ecl-site-header__top" data-ecl-site-header-top>
+              <a href="#main-content" class="ecl-link ecl-link--standalone ecl-site-header__logo-link">
+                <picture class="ecl-picture ecl-site-header__picture">
+                  <source srcset="assets/icons/logo-ec.svg" media="(min-width: 996px)">
+                  <img class="ecl-site-header__logo-image" src="assets/icons/logo-ec.svg" alt="European Commission">
+                </picture>
+              </a>
+              <div class="ecl-site-header__action">
+                <div class="ecl-site-header__language">
+                  <a class="ecl-button ecl-button--tertiary ecl-site-header__language-selector" href="#" role="button"
+                    aria-label="Change language, current language is English - EN" aria-controls="language-list-overlay" aria-expanded="false" data-ecl-language-selector>
+                    <span class="ecl-site-header__language-icon">
+                      <svg class="ecl-icon ecl-icon--s ecl-site-header__icon" focusable="false" aria-hidden="false"
+                        role="img">
+                        <title>EN</title>
+                        <use xlink:href="assets/icons/icons.svg#global"></use>
+                      </svg>
+                    </span>
+                    EN
+                  </a>
+                  <div class="ecl-site-header__language-container" id="language-list-overlay" hidden data-ecl-language-list-overlay aria-labelledby="ecl-site-header__language-title" role="dialog">
+                    <div class="ecl-site-header__language-header">
+                      <div class="ecl-site-header__language-title" id="ecl-site-header__language-title">Select your language</div>
+                      <button class="ecl-button ecl-button--tertiary ecl-site-header__language-close ecl-button--icon-only" type="button" data-ecl-language-list-close>
+                        <span class="ecl-button__container">
+                          <span class="ecl-button__label" data-ecl-label="true">Close</span>
+                          <svg class="ecl-icon ecl-icon--m ecl-button__icon" focusable="false" aria-hidden="true" data-ecl-icon>
+                            <use xlink:href="assets/icons/icons.svg#close"></use>
+                          </svg>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="ecl-site-header__language-content" data-ecl-language-list-content>
+                      <ul class="ecl-site-header__language-list">
+                        <li class="ecl-site-header__language-item">
+                          <a href="#" class="ecl-link ecl-link--standalone ecl-link--no-visited ecl-site-header__language-link ecl-site-header__language-link--active" hreflang="en">
+                            <span class="ecl-site-header__language-link-code">en</span>
+                            <span class="ecl-site-header__language-link-label" lang="en">English</span>
+                          </a>
+                        </li>
+                        <li class="ecl-site-header__language-item">
+                          <a href="#" class="ecl-link ecl-link--standalone ecl-link--no-visited ecl-site-header__language-link" hreflang="fr">
+                            <span class="ecl-site-header__language-link-code">fr</span>
+                            <span class="ecl-site-header__language-link-label" lang="fr">français</span>
+                          </a>
+                        </li>
+                        <li class="ecl-site-header__language-item">
+                          <a href="#" class="ecl-link ecl-link--standalone ecl-link--no-visited ecl-site-header__language-link" hreflang="de">
+                            <span class="ecl-site-header__language-link-code">de</span>
+                            <span class="ecl-site-header__language-link-label" lang="de">Deutsch</span>
+                          </a>
+                        </li>
+                        <li class="ecl-site-header__language-item">
+                          <a href="#" class="ecl-link ecl-link--standalone ecl-link--no-visited ecl-site-header__language-link" hreflang="es">
+                            <span class="ecl-site-header__language-link-code">es</span>
+                            <span class="ecl-site-header__language-link-label" lang="es">español</span>
+                          </a>
+                        </li>
+                        <li class="ecl-site-header__language-item">
+                          <a href="#" class="ecl-link ecl-link--standalone ecl-link--no-visited ecl-site-header__language-link" hreflang="it">
+                            <span class="ecl-site-header__language-link-code">it</span>
+                            <span class="ecl-site-header__language-link-label" lang="it">italiano</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="ecl-site-header__search-container" role="search">
+                  <a class="ecl-button ecl-button--tertiary ecl-site-header__search-toggle" href="#"
+                    aria-controls="search-form-id" aria-expanded="false">
+                    <svg class="ecl-icon ecl-icon--s ecl-site-header__icon" focusable="false" aria-hidden="false"
+                      role="img">
+                      <title>Search</title>
+                      <use xlink:href="assets/icons/icons.svg#search"></use>
+                    </svg>
+                    Search
+                  </a>
+                  <form class="ecl-search-form ecl-site-header__search" role="search" id="search-form-id">
+                    <div class="ecl-form-group">
+                      <label for="search-input-id" id="search-input-id-label"
+                        class="ecl-form-label ecl-search-form__label">Search</label>
+                      <input id="search-input-id" class="ecl-text-input ecl-text-input--m ecl-search-form__text-input"
+                        type="search" placeholder="Search">
+                    </div>
+                    <button class="ecl-button ecl-button--ghost ecl-search-form__button" type="submit">
+                      <span class="ecl-button__container">
+                        <svg class="ecl-icon ecl-icon--xs ecl-button__icon" focusable="false" aria-hidden="true">
+                          <use xlink:href="assets/icons/icons.svg#search"></use>
+                        </svg>
+                        <span class="ecl-button__label">Search</span>
+                      </span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ecl-site-header__banner">
+      <div class="ecl-container">
+        <div class="ecl-site-header__site-name">European Commission Survey Platform</div>
+      </div>
+    </div>
+    <nav class="ecl-menu" data-ecl-menu data-ecl-auto-init="Menu" aria-expanded="false" role="navigation"
+      aria-label="Main navigation">
+      <div class="ecl-menu__overlay"></div>
+      <div class="ecl-container ecl-menu__container">
+        <button class="ecl-button ecl-button--tertiary ecl-menu__open ecl-button--icon-only" type="button"
+          data-ecl-menu-open aria-expanded="false">
+          <span class="ecl-button__container">
+            <svg class="ecl-icon ecl-icon--m ecl-button__icon" focusable="false" aria-hidden="true" data-ecl-icon>
+              <use xlink:href="assets/icons/icons.svg#hamburger"></use>
+            </svg>
+            <svg class="ecl-icon ecl-icon--m ecl-button__icon" focusable="false" aria-hidden="true" data-ecl-icon>
+              <use xlink:href="assets/icons/icons.svg#close"></use>
+            </svg>
+            <span class="ecl-button__label" data-ecl-label="true">Menu</span>
+          </span>
+        </button>
+        <section class="ecl-menu__inner" data-ecl-menu-inner aria-label="Menu">
+          <header class="ecl-menu__inner-header">
+            <button class="ecl-button ecl-button--ghost ecl-menu__close ecl-button--icon-only" type="submit"
+              data-ecl-menu-close>
+              <span class="ecl-button__container">
+                <span class="ecl-button__label" data-ecl-label="true">Close</span>
+                <svg class="ecl-icon ecl-icon--m ecl-button__icon" focusable="false" aria-hidden="true" data-ecl-icon>
+                  <use xlink:href="assets/icons/icons.svg#close"></use>
+                </svg>
+              </span>
+            </button>
+            <div class="ecl-menu__title">Menu</div>
+            <button class="ecl-button ecl-button--ghost ecl-menu__back" type="submit" data-ecl-menu-back>
+              <span class="ecl-button__container">
+                <svg class="ecl-icon ecl-icon--xs ecl-icon--rotate-270 ecl-button__icon" focusable="false"
+                  aria-hidden="true" data-ecl-icon>
+                  <use xlink:href="assets/icons/icons.svg#corner-arrow"></use>
+                </svg>
+                <span class="ecl-button__label" data-ecl-label="true">Back</span>
+              </span>
+            </button>
+          </header>
+          <ul class="ecl-menu__list" data-ecl-menu-list>
+            <li class="ecl-menu__item ecl-menu__item--current" data-ecl-menu-item>
+              <a href="/" class="ecl-link ecl-link--standalone ecl-menu__link ecl-menu__link--current"
+                data-ecl-menu-link aria-current="page">Home</a>
+            </li>
+            <li class="ecl-menu__item" data-ecl-menu-item>
+              <a href="/about" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link>About</a>
+            </li>
+            <li class="ecl-menu__item ecl-menu__item--has-children" data-ecl-menu-item data-ecl-has-children
+              aria-haspopup aria-expanded="false">
+              <a href="/surveys" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link>Surveys</a>
+              <button class="ecl-button ecl-button--ghost ecl-menu__button-caret ecl-button--icon-only" type="button"
+                data-ecl-menu-caret aria-label="Access item's children" aria-expanded="false">
+                <span class="ecl-button__container">
+                  <svg class="ecl-icon ecl-icon--xs ecl-icon--rotate-180 ecl-button__icon" focusable="false"
+                    aria-hidden="true" data-ecl-icon>
+                    <use xlink:href="assets/icons/icons.svg#corner-arrow"></use>
+                  </svg>
+                </span>
+              </button>
+              <div class="ecl-menu__mega" data-ecl-menu-mega>
+                <ul class="ecl-menu__sublist">
+                  <li class="ecl-menu__subitem" data-ecl-menu-subitem>
+                    <a href="/surveys/active" class="ecl-link ecl-link--standalone ecl-menu__sublink">Active Surveys</a>
+                  </li>
+                  <li class="ecl-menu__subitem" data-ecl-menu-subitem>
+                    <a href="/surveys/results" class="ecl-link ecl-link--standalone ecl-menu__sublink">Survey
+                      Results</a>
+                  </li>
+                  <li class="ecl-menu__subitem" data-ecl-menu-subitem>
+                    <a href="/surveys/archive" class="ecl-link ecl-link--standalone ecl-menu__sublink">Archive</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="ecl-menu__item" data-ecl-menu-item>
+              <a href="/resources" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link>Resources</a>
+            </li>
+            <li class="ecl-menu__item" data-ecl-menu-item>
+              <a href="/contact" class="ecl-link ecl-link--standalone ecl-menu__link" data-ecl-menu-link>Contact</a>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content" class="ecl-u-type-m">
+    <div class="ecl-container">
+      <div class="ecl-u-pv-xl">
+        <h1 class="ecl-u-type-heading-1">Sample Page</h1>
+        <p class="ecl-u-type-paragraph-lead ecl-u-mt-m">This is a sample page demonstrating the Europa Component Library
+          (ECL) with locally hosted assets.</p>
+
+        <div class="ecl-u-mt-xl">
+          <h2 class="ecl-u-type-heading-2">About This Page</h2>
+          <p class="ecl-u-type-paragraph ecl-u-mt-m">This is a demonstration page built with the Europa Component
+            Library (ECL). All assets including CSS, JavaScript, icons, and logos are hosted locally.</p>
+
+          <div class="ecl-u-mt-l">
+            <h3 class="ecl-u-type-heading-3">Components Included</h3>
+            <ul class="ecl-unordered-list ecl-u-mt-m">
+              <li class="ecl-unordered-list__item">Site Header with logo, language selector, and search</li>
+              <li class="ecl-unordered-list__item">Responsive typography and spacing utilities</li>
+              <li class="ecl-unordered-list__item">Site Footer with links and social media icons</li>
+              <li class="ecl-unordered-list__item">ECL styling system with locally hosted assets</li>
+            </ul>
+          </div>
+
+          <div class="ecl-u-mt-l">
+            <h3 class="ecl-u-type-heading-3">Local Assets</h3>
+            <p class="ecl-u-type-paragraph ecl-u-mt-m">All required assets are stored in the assets directory:</p>
+            <ul class="ecl-unordered-list ecl-u-mt-m">
+              <li class="ecl-unordered-list__item">CSS files: ecl-ec.css, ecl-reset.css</li>
+              <li class="ecl-unordered-list__item">JavaScript: ecl-ec.js</li>
+              <li class="ecl-unordered-list__item">Icons: SVG sprite files</li>
+              <li class="ecl-unordered-list__item">Logo: European Commission logo (EN)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="ecl-site-footer ecl-site-footer--split-columns">
+    <div class="ecl-container ecl-site-footer__container">
+      <div class="ecl-site-footer__row">
+        <div class="ecl-site-footer__column">
+          <div class="ecl-site-footer__section">
+            <a href="#main-content" class="ecl-link ecl-link--standalone ecl-site-footer__logo-link">
+              <picture class="ecl-picture ecl-site-footer__picture">
+                <source srcset="assets/icons/logo-ec-negative.svg" media="(min-width: 996px)">
+                <img class="ecl-site-footer__logo-image" src="assets/icons/logo-ec-negative.svg"
+                  alt="European Commission">
+              </picture>
+            </a>
+            <div class="ecl-site-footer__description">
+              This site is managed by:<br />Europa Component Library Demo
+            </div>
+          </div>
+        </div>
+        <div class="ecl-site-footer__column">
+          <div class="ecl-site-footer__section ecl-site-footer__section--separator">
+            <ul class="ecl-site-footer__list ecl-site-footer__list--columns">
+              <li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/about-european-commission_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">About the European
+                  Commission</a></li>
+              <li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/business-economy-euro_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">Business, Economy,
+                  Euro</a></li>
+              <li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/live-work-travel-eu_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">Live, work, travel in
+                  the EU</a></li>
+            </ul>
+          </div>
+          <div class="ecl-site-footer__section">
+            <ul class="ecl-site-footer__list">
+              <li class="ecl-site-footer__list-item"><a
+                  href="https://commission.europa.eu/about-european-commission/contact_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">Contact the European
+                  Commission</a></li>
+              <li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/accessibility-statement_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">Accessibility</a></li>
+            </ul>
+          </div>
+          <div class="ecl-site-footer__section ecl-site-footer__section--split-list">
+            <ul class="ecl-site-footer__list">
+              <li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/languages-our-websites_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">Languages on our
+                  websites</a></li>
+              <li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/cookies_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">Cookies</a></li>
+              <li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/privacy-policy_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">Privacy policy</a></li>
+              <li class="ecl-site-footer__list-item"><a href="https://commission.europa.eu/legal-notice_en"
+                  class="ecl-link ecl-link--standalone ecl-link--inverted ecl-site-footer__link">Legal notice</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/ecl-ec.js"></script>
   <script>
     ECL.autoInit();
   </script>
 </body>
+
 </html>`;
 
     return {
@@ -802,12 +1091,12 @@ Icons and logos from same CDN:
 
       // Format results with more readable snippets
       let output = `# Search Results for "${query}"\n\nFound ${results.length} result(s):\n\n`;
-      
+
       results.forEach((result, index) => {
         output += `## ${index + 1}. ${result.title}\n`;
         output += `**URL:** ${result.url}\n`;
         output += `**Category:** ${result.category}\n`;
-        
+
         // Show hierarchy path
         const hierarchy = [
           result.hierarchy_1,
@@ -815,11 +1104,11 @@ Icons and logos from same CDN:
           result.hierarchy_3,
           result.hierarchy_4,
         ].filter(h => h).join(' > ');
-        
+
         if (hierarchy) {
           output += `**Path:** ${hierarchy}\n`;
         }
-        
+
         output += `**Snippet:** ${result.snippet}\n\n`;
       });
 
@@ -880,7 +1169,7 @@ Icons and logos from same CDN:
       }
 
       let output = `# Recipe Search Results for "${query}"\n\nFound ${results.length} recipe(s):\n\n`;
-      
+
       results.forEach((result, index) => {
         output += `## ${index + 1}. ${result.title}\n`;
         output += `**Difficulty:** ${result.difficulty || 'Not specified'}\n`;
@@ -1012,7 +1301,7 @@ Icons and logos from same CDN:
       }
 
       let output = `# Example Search Results for "${query}"\n\nFound ${results.length} example(s):\n\n`;
-      
+
       results.forEach((result, index) => {
         output += `## ${index + 1}. ${result.label || 'Untitled Example'}\n`;
         output += `**From:** ${result.page_title} (${result.category})\n`;
@@ -1121,7 +1410,7 @@ Icons and logos from same CDN:
       // Match by label if provided
       else if (label !== undefined) {
         const lowerLabel = label.toLowerCase();
-        
+
         // Try exact match first
         for (let i = 0; i < examples.length; i++) {
           if (examples[i].label && examples[i].label.toLowerCase() === lowerLabel) {
@@ -1147,7 +1436,7 @@ Icons and logos from same CDN:
           let availableLabels = examples
             .map((ex, idx) => `  ${idx}. ${ex.label || '(no label)'}`)
             .join('\n');
-          
+
           return {
             content: [
               {
