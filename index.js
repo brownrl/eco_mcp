@@ -34,7 +34,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'start_here',
-        description: '🚨 CALL THIS FIRST! 🚨 Essential setup guide with asset download script and quick start instructions. Returns complete workflow for building ECL pages. ALL other tools assume you have to read this first',
+        description: 'CALL THIS FIRST! Essential setup guide with asset download script and quick start instructions. Returns complete workflow for building ECL pages. ALL other tools assume you have to read this first',
         inputSchema: {
           type: 'object',
           properties: {},
@@ -42,7 +42,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: 'search',
+        name: 'search_documentation_pages',
         description: 'Search the EC Europa Component Library documentation. Returns matching pages with their titles, URLs, categories, and hierarchy information.',
         inputSchema: {
           type: 'object',
@@ -78,7 +78,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: 'get_examples',
+        name: 'get_documentation_page_examples',
         description: 'Get code examples from a specific documentation page by URL. Returns only the code blocks with their labels, making it faster than parsing full HTML.',
         inputSchema: {
           type: 'object',
@@ -106,7 +106,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: 'index',
+        name: 'get_documentation_pages_list',
         description: 'Get the complete list of all pages in the ECL documentation database. Returns URL, title, category, and hierarchy information for all 159 pages.',
         inputSchema: {
           type: 'object',
@@ -115,7 +115,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: 'recipe_search',
+        name: 'search_recipes',
         description: 'Search ECL recipes - pre-built component combinations and patterns. Returns step-by-step guides for common tasks like "complete webpage", "login form", "dashboard layout". More comprehensive than individual component docs.',
         inputSchema: {
           type: 'object',
@@ -133,7 +133,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: 'recipe_get',
+        name: 'get_recipe',
         description: 'Get the complete recipe by ID. Returns full markdown content with step-by-step instructions, code examples, and best practices. Use this after recipe_search to get implementation details.',
         inputSchema: {
           type: 'object',
@@ -347,7 +347,7 @@ Copy HTML into template's \`<main>\` section. Components auto-initialize.
     }
   }
 
-  if (name === 'get_examples') {
+  if (name === 'get_documentation_page_examples') {
     const url = args.url;
 
     try {
@@ -803,7 +803,7 @@ Icons and logos from same CDN:
     };
   }
 
-  if (name === 'index') {
+  if (name === 'get_documentation_pages_list') {
     try {
       const results = await dbAll(
         `SELECT 
@@ -862,72 +862,184 @@ Icons and logos from same CDN:
     }
   }
 
-  if (name === 'search') {
+  if (name === 'search_documentation_pages') {
     const query = args.query.toLowerCase(); // Lowercase since FTS content is lowercased
     const limit = args.limit || 10;
 
     try {
-      // Use FTS5 with lowercased query for case-insensitive search
-      let results = await dbAll(
-        `SELECT 
-          p.id,
-          p.url,
-          p.title,
-          p.category,
-          p.hierarchy_1,
-          p.hierarchy_2,
-          p.hierarchy_3,
-          p.hierarchy_4,
-          snippet(pages_fts, 1, '<mark>', '</mark>', '...', 50) as snippet
-         FROM pages_fts
-         JOIN pages p ON pages_fts.rowid = p.id
-         WHERE pages_fts MATCH ?
-         ORDER BY rank
-         LIMIT ?`,
-        [query, limit]
-      );
+      // Build smart FTS query:
+      // 1. Try exact phrase first (quoted)
+      // 2. Try normalized compound word (no spaces/hyphens)
+      // 3. Fall back to AND for multi-word
+      const words = query.split(/\s+/);
+      let ftsQueries = [];
+      
+      if (words.length > 1) {
+        // Try as exact phrase
+        ftsQueries.push(`\"${query}\"`);
+        // Try as compound word (datepicker, textfield, etc)
+        ftsQueries.push(words.join(''));
+        // Try with hyphen
+        ftsQueries.push(words.join('-'));
+        // Fall back to AND
+        ftsQueries.push(words.join(' AND '));
+      } else {
+        ftsQueries.push(query);
+      }
+      
+      // Try each query in order until we get results
+      let results = [];
+      for (const ftsQuery of ftsQueries) {
+        try {
+          results = await dbAll(
+            `SELECT 
+              p.id,
+              p.url,
+              p.title,
+              p.category,
+              p.hierarchy_1,
+              p.hierarchy_2,
+              p.hierarchy_3,
+              p.hierarchy_4,
+              snippet(pages_fts, 1, '<mark>', '</mark>', '...', 50) as snippet
+             FROM pages_fts
+             JOIN pages p ON pages_fts.rowid = p.id
+             WHERE pages_fts MATCH ?
+             ORDER BY rank
+             LIMIT ?`,
+            [ftsQuery, limit]
+          );
+          
+          if (results.length > 0) {
+            break; // Found results, stop trying
+          }
+        } catch (e) {
+          // Query syntax error, try next variant
+          continue;
+        }
+      }
 
       if (results.length === 0) {
         return {
           content: [
             {
               type: 'text',
-              text: `No results found for: "${query}"`,
+              text: JSON.stringify({
+                query: query,
+                total: 0,
+                results: []
+              }, null, 2),
             },
           ],
         };
       }
 
-      // Format results with more readable snippets
-      let output = `# Search Results for "${query}"\n\nFound ${results.length} result(s):\n\n`;
+      // Check for examples and sister pages for each page
+      const resultsWithExamples = await Promise.all(
+        results.map(async (result) => {
+          const exampleCount = await dbAll(
+            'SELECT COUNT(*) as count FROM examples WHERE page_id = ?',
+            [result.id]
+          );
 
-      results.forEach((result, index) => {
-        output += `## ${index + 1}. ${result.title}\n`;
-        output += `**URL:** ${result.url}\n`;
-        output += `**Category:** ${result.category}\n`;
+          const hierarchy = [
+            result.hierarchy_1,
+            result.hierarchy_2,
+            result.hierarchy_3,
+            result.hierarchy_4,
+          ].filter(h => h);
 
-        // Show hierarchy path
-        const hierarchy = [
-          result.hierarchy_1,
-          result.hierarchy_2,
-          result.hierarchy_3,
-          result.hierarchy_4,
-        ].filter(h => h).join(' > ');
+          // Find sister pages (same hierarchy except last field)
+          // The last non-null hierarchy field is the page type (usage/code/api)
+          let sisterPages = [];
+          const sisterTypes = ['usage', 'code', 'api'];
+          
+          // Determine which hierarchy level contains the page type
+          let pageType = null;
+          let hierarchyLevel = null;
+          
+          if (result.hierarchy_4 && sisterTypes.includes(result.hierarchy_4)) {
+            pageType = result.hierarchy_4;
+            hierarchyLevel = 4;
+          } else if (result.hierarchy_3 && sisterTypes.includes(result.hierarchy_3)) {
+            pageType = result.hierarchy_3;
+            hierarchyLevel = 3;
+          } else if (result.hierarchy_2 && sisterTypes.includes(result.hierarchy_2)) {
+            pageType = result.hierarchy_2;
+            hierarchyLevel = 2;
+          }
+          
+          if (pageType && hierarchyLevel) {
+            // Build condition to match siblings
+            const conditions = [];
+            const params = [];
+            
+            // Match all hierarchy levels before the page type
+            if (hierarchyLevel >= 2 && result.hierarchy_1) {
+              conditions.push('hierarchy_1 = ?');
+              params.push(result.hierarchy_1);
+            }
+            if (hierarchyLevel >= 3 && result.hierarchy_2) {
+              conditions.push('hierarchy_2 = ?');
+              params.push(result.hierarchy_2);
+            }
+            if (hierarchyLevel >= 4 && result.hierarchy_3) {
+              conditions.push('hierarchy_3 = ?');
+              params.push(result.hierarchy_3);
+            }
+            
+            // Ensure levels after page type are null
+            if (hierarchyLevel === 2) {
+              conditions.push('hierarchy_3 IS NULL');
+              conditions.push('hierarchy_4 IS NULL');
+            } else if (hierarchyLevel === 3) {
+              conditions.push('hierarchy_4 IS NULL');
+            }
+            
+            const whereClause = conditions.join(' AND ');
+            const hierarchyField = `hierarchy_${hierarchyLevel}`;
+            
+            const sisters = await dbAll(
+              `SELECT url, title, ${hierarchyField} as page_type FROM pages WHERE ${whereClause} AND ${hierarchyField} != ?`,
+              [...params, pageType]
+            );
+            
+            sisterPages = sisters.map(s => ({
+              type: s.page_type,
+              url: s.url,
+              title: s.title,
+              get_page_call: `get_documentation_page(url="${s.url}")`
+            }));
+          }
 
-        if (hierarchy) {
-          output += `**Path:** ${hierarchy}\n`;
-        }
+          return {
+            title: result.title,
+            url: result.url,
+            category: result.category,
+            hierarchy: hierarchy,
+            snippet: result.snippet,
+            has_examples: exampleCount[0].count > 0,
+            example_count: exampleCount[0].count,
+            related_pages: sisterPages.length > 0 ? sisterPages : undefined,
+            get_examples_call: exampleCount[0].count > 0 
+              ? `get_documentation_page_examples(url="${result.url}")`
+              : null,
+            get_page_call: `get_documentation_page(url="${result.url}")`
+          };
+        })
+      );
 
-        output += `**Snippet:** ${result.snippet}\n\n`;
-      });
-
-      output += `\n---\n💡 **Tip:** New to ECL? Call 'get_starter_template' for a ready-to-use HTML boilerplate, or search "getting started" for full setup documentation.\n`;
+      const output = {
+        query: query,
+        total: results.length,
+        results: resultsWithExamples
+      };
 
       return {
         content: [
           {
             type: 'text',
-            text: output,
+            text: JSON.stringify(output, null, 2),
           },
         ],
       };
@@ -944,7 +1056,7 @@ Icons and logos from same CDN:
     }
   }
 
-  if (name === 'recipe_search') {
+  if (name === 'search_recipes') {
     const query = args.query.toLowerCase();
     const limit = args.limit || 5;
 
@@ -1011,7 +1123,7 @@ Icons and logos from same CDN:
     }
   }
 
-  if (name === 'recipe_get') {
+  if (name === 'get_recipe') {
     const id = args.id;
 
     try {
@@ -1103,29 +1215,35 @@ Icons and logos from same CDN:
           content: [
             {
               type: 'text',
-              text: `No examples found for: "${query}"\n\nTry broader terms or check component names with 'search' tool.`,
+              text: JSON.stringify({
+                query: query,
+                total: 0,
+                results: []
+              }, null, 2),
             },
           ],
         };
       }
 
-      let output = `# Example Search Results for "${query}"\n\nFound ${results.length} example(s):\n\n`;
-
-      results.forEach((result, index) => {
-        output += `## ${index + 1}. ${result.label || 'Untitled Example'}\n`;
-        output += `**From:** ${result.page_title} (${result.category})\n`;
-        output += `**URL:** ${result.url}\n`;
-        output += `**Match:** ${result.snippet}\n\n`;
-        output += `\`\`\`html\n${result.code}\n\`\`\`\n\n`;
-      });
-
-      output += `\n---\n💡 **Tip:** Use 'get_example' with the page URL and label to retrieve a specific example, or 'get_examples' to see all examples from that page.\n`;
+      const output = {
+        query: query,
+        total: results.length,
+        results: results.map((result, index) => ({
+          index: index + 1,
+          label: result.label || 'Untitled Example',
+          page_title: result.page_title,
+          category: result.category,
+          url: result.url,
+          snippet: result.snippet,
+          code: result.code,
+        }))
+      };
 
       return {
         content: [
           {
             type: 'text',
-            text: output,
+            text: JSON.stringify(output, null, 2),
           },
         ],
       };
