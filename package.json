@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/brownrl/eco_mcp#readme",
   "dependencies": {
+    "@ecl/preset-ec": "^4.11.0",
     "@modelcontextprotocol/sdk": "^1.22.0",
     "sqlite3": "^5.1.7"
   },

@@ -261,11 +261,18 @@ get_starter_template(title="My Page")
 \`\`\`
 Returns full HTML page with header, footer, navigation, and ECL initialized.
 
-### Step 3: Find & Add Components
+### Step 3: Find & Add Components OR list all of the recipes.
+
 \`\`\`
 search_examples(query="card")
 \`\`\`
-Copy HTML into template's \`<main>\` section. Components auto-initialize.
+
+or
+
+\`\`\`
+list_recipes()
+\`\`\`
+
 
 ---
 
@@ -273,9 +280,9 @@ Copy HTML into template's \`<main>\` section. Components auto-initialize.
 
 **Start here:** \`get_starter_template\` - Complete HTML boilerplate
 
-**Find components:** \`search_examples\`, \`get_example\`, \`search_documentation_pages\`
+**Find components:** \`search_examples\`, \`get_example\`, \`search_documentation_pages\`, \`get_documentation_page\`
 
-**Advanced:** \`list_recipes\`, \`recipe_get\`, \`get_documentation_page\`, \`get_documentation_pages_list\`, \`get_documentation_page_examples\`
+**Advanced:** \`list_recipes\`, \`recipe_get\`, \`get_documentation_pages_list\`, \`get_documentation_page_examples\`
 
 ---
 
@@ -912,7 +919,7 @@ Icons and logos from same CDN:
 
       if (results.length === 0) {
         const words = query.split(/\s+/);
-        const suggestion = words.length > 1 
+        const suggestion = words.length > 1
           ? `Try searching with just one word (e.g., "${words[0]}" instead of "${query}")`
           : null;
 
@@ -1192,7 +1199,7 @@ Icons and logos from same CDN:
 
       if (results.length === 0) {
         const words = query.split(/\s+/);
-        const suggestion = words.length > 1 
+        const suggestion = words.length > 1
           ? `Try searching with just one word (e.g., "${words[0]}" instead of "${query}")`
           : null;
 
