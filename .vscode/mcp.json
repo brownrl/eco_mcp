@@ -1,0 +1,11 @@
+{
+    "servers": {
+        "ecl": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "ecl-mcp"
+            ]
+        }
+    }
+}

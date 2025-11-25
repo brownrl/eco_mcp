@@ -11,23 +11,68 @@ A Model Context Protocol (MCP) server that provides AI agents with access to the
 
 ## Installation
 
-Install directly from GitHub:
+Install from GitHub:
 
 ```bash
 npm install github:brownrl/eco_mcp
 ```
 
-## Usage
+Or install the published package:
 
-Add to your MCP client configuration (e.g., Claude Desktop):
+```bash
+npm install eco_mcp
+```
+
+## Configuration
+
+### Charm Crush
+
+Create a `.crush.json` file in your project root:
+
+```json
+{
+  "$schema": "https://charm.land/crush.json",
+  "mcp": {
+    "ecl": {
+      "command": "npx",
+      "type": "stdio",
+      "args": [
+        "ecl-mcp"
+      ]
+    }
+  }
+}
+```
+
+### VSCode with MCP Extension
+
+Create a `.vscode/mcp.json` file in your project root:
+
+```json
+{
+  "servers": {
+    "ecl": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "ecl-mcp"
+      ]
+    }
+  }
+}
+```
+
+### Claude Desktop
+
+Add to your Claude Desktop configuration:
 
 ```json
 {
   "mcpServers": {
     "ecl": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "/path/to/your/project/node_modules/eco_mcp/index.js"
+        "ecl-mcp"
       ]
     }
   }
