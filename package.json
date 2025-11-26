@@ -11,16 +11,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brownrl/eco_mcp.git"
+    "url": "git+https://github.com/brownrl/ecl_mcp.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/brownrl/eco_mcp/issues"
+    "url": "https://github.com/brownrl/ecl_mcp/issues"
   },
-  "homepage": "https://github.com/brownrl/eco_mcp#readme",
+  "homepage": "https://github.com/brownrl/ecl_mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",
     "sqlite3": "^5.1.7"
